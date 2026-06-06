@@ -228,6 +228,7 @@ body.ro .modepill{display:none!important}
       <button class="btn" id="exportBtn">⬇ Exporter</button>
       <button class="btn" id="planPdfBtn">🖨 PDF</button>
       <button class="btn adminOnly" id="accessBtn">👥 Accès</button>
+      <button class="btn" id="guideBtn">📖 Guide</button>
       <button class="btn ghost" id="helpBtn">?</button>
       <span id="syncPill" class="syncpill off">…</span>
       <span class="roBadge" id="roBadge">🔒 Lecture seule</span>
@@ -824,6 +825,32 @@ document.getElementById('helpBtn').onclick=()=>{const m=document.getElementById(
   document.getElementById('resetAll').onclick=()=>{if(!isAdmin())return;if(confirm('Réinitialiser TOUS les événements (pour tout le monde) ? Tout sera perdu.')){localStorage.removeItem('gfca_evt_cache');DB=normalize(defaultDB());localTs=Date.now();S=curEvent();closeModal();gateRender();pushRemote();}};
 };
 
+function openGuide(){const m=document.getElementById('modal');
+  m.innerHTML=`<h3><span>📖 Guide — mode opératoire</span><button id="mclose">×</button></h3>
+   <div class="mbody" style="max-height:72vh;overflow:auto;font-size:13px;line-height:1.55;color:#334155">
+   <div class="sectlabel">À quoi sert l'appli</div>
+   <p>Préparer le placement des invités : disposer le mobilier sur le plan, importer ou saisir les réservations, puis attribuer chaque réservation à un emplacement. On peut gérer plusieurs événements en parallèle.</p>
+   <div class="sectlabel">Connexion &amp; profils (version en ligne)</div>
+   <p>Un <b>code d'accès</b> est demandé à l'ouverture. <b>Admin</b> : voit tous les événements, les crée / supprime, gère les accès (<b>👥 Accès</b>). <b>Organisateur</b> : ne voit que les événements qui lui sont attribués, en <b>Édition</b> ou <b>🔒 Lecture seule</b>.</p>
+   <div class="sectlabel">Événements</div>
+   <p><b>＋ Événement</b> (admin) en crée un. <b>⚙</b> ouvre les paramètres : nom, organisateur, jauge max et l'attribution aux organisateurs (admin). <b>🖼</b> change le fond. <b>×</b> ou <b>⚙ → 🗑</b> supprime (admin). <b>⧉ Dupliquer</b> (dans ⚙) reprend le plan et le mobilier d'un événement, réservations vidées.</p>
+   <div class="sectlabel">Réservations (par événement)</div>
+   <p><b>📄 Modèle</b> télécharge un fichier vierge à remplir (Excel), puis <b>⬆ Importer CSV</b> l'injecte dans l'événement actif (placements conservés). Ou <b>＋ Ajouter une réservation</b> à la main ; <b>✎</b> pour modifier / supprimer. Recherche + filtres placement et statut.</p>
+   <div class="sectlabel">Placer les invités</div>
+   <p>En mode <b>Placer les résas</b> : depuis une fiche → « Placer sur le plan » → touchez l'emplacement ; ou touchez l'emplacement puis choisissez la résa. Survol d'une table = détails. <i>(droits d'édition requis)</i></p>
+   <div class="sectlabel">Éditer le plan</div>
+   <p>Bouton <b>Éditer le plan</b> : <b>ajouter</b> (onglet Mobilier), <b>déplacer</b> (glisser), <b>pivoter</b> (poignée ↻, Maj = pas de 15°), <b>modifier / supprimer</b> (toucher), <b>＋ Meuble personnalisé</b>. <i>(droits d'édition)</i></p>
+   <div class="sectlabel">Compteurs &amp; couleurs</div>
+   <p><b>Jauge</b> couverts / jauge (rouge si dépassée), <b>placées</b>, <b>couverts placés</b>, <b>libres</b>. Sur une table : liseré orange = complète, rouge = dépassée, badge = nb de personnes placées.</p>
+   <div class="sectlabel">Exporter &amp; imprimer</div>
+   <p><b>⬇ Exporter</b> : CSV des placements. <b>🖨 PDF</b> : Plan A4 / A3, ou Liste de placement A4. (Les PDF nécessitent une connexion au 1er chargement.)</p>
+   <div class="sectlabel">Sauvegarde</div>
+   <p>En ligne : données <b>communes à tous</b>, synchro automatique (indicateur ✓ / ⟳ / ⚠), règle « dernière modification gagnante ». En local : enregistré dans ce navigateur.</p>
+   </div>`;
+  document.getElementById('modalBg').classList.add('show');
+  document.getElementById('mclose').onclick=closeModal;
+}
+document.getElementById('guideBtn').onclick=openGuide;
 /* ---------- modes / tabs / zoom ---------- */
 function setMode(m){if(m==='edit'&&!RW())return;mode=m;
   document.getElementById('mResa').classList.toggle('on',m==='resa');
@@ -879,6 +906,7 @@ function openEventSettings(id){if(!isAdmin())return;const e=DB.events.find(x=>x.
    <div class="editrow"><label>Jauge max</label><input id="evM" type="number" min="0" value="${e.maxCap||''}" placeholder="nb de personnes"> pers.</div>
    <div class="sectlabel" style="margin-top:8px">Accès organisateurs</div>${accRows}
    <button class="addresa" id="evSave" style="background:var(--orange);color:#241f15;border:none;margin-top:6px">✓ Enregistrer</button>
+   <button class="addresa" id="evDup" style="background:var(--navy);color:#fff;border:none;margin-top:10px">⧉ Dupliquer (conserver le plan &amp; le mobilier)</button>
    <button class="del" id="evDel">🗑 Supprimer cet événement</button>
    </div>`;
   document.getElementById('modalBg').classList.add('show');
@@ -888,6 +916,7 @@ function openEventSettings(id){if(!isAdmin())return;const e=DB.events.find(x=>x.
     e.access=orgas.filter(u=>{const cb=document.querySelector('[data-acc="'+u.id+'"]');return cb&&cb.checked;}).map(u=>({u:u.id,r:document.querySelector('[data-accr="'+u.id+'"]').value}));
     save();closeModal();renderEventTabs();renderStats();toast('Paramètres enregistrés');};
   document.getElementById('evDel').onclick=()=>deleteEvent(id);
+  document.getElementById('evDup').onclick=()=>duplicateEvent(id);
 }
 function downloadTemplate(){const e=curEvent();
   const head=['N°','Date réception','Nom / Structure','Catégorie','Nb personnes','Numéro de contact','Email','Statut','Notes'];
@@ -911,6 +940,7 @@ function deleteEvent(id){if(!isAdmin())return;const e=DB.events.find(x=>x.id===i
   if(DB.events.length===0){const f=freshEvent('Nouvel événement');DB.events.push(f);DB.curId=f.id;}
   else if(DB.curId===id){DB.curId=DB.events[0].id;}
   setEvent(DB.curId);toast('Événement supprimé');}
+function duplicateEvent(id){if(!isAdmin())return;const e=DB.events.find(x=>x.id===id);if(!e)return;const c=JSON.parse(JSON.stringify(e));c.id='evt'+Date.now();c.name=(e.name||'Événement')+' (copie)';c.resa=[];c.access=[];DB.events.push(c);closeModal();setEvent(c.id);toast('Événement dupliqué — plan et mobilier conservés, réservations vides');}
 document.getElementById('bgIn').onchange=e=>{if(!RW())return;const file=e.target.files[0];if(!file)return;
   const rd=new FileReader();rd.onload=()=>{const img=new Image();img.onload=()=>{
     const maxd=1700;let w=img.width,h=img.height;const sc=Math.min(1,maxd/Math.max(w,h));
