@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Gestion des événements · Domaine Peraldi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
 :root{
-  --navy:#1F3A5F; --navy2:#16293f; --orange:#E67E22; --orange-d:#c9661a;
+  --navy:#1F3A5F; --navy2:#16293f; --orange:#A9842B; --orange-d:#8c6f24; --charcoal:#2c2925; --charcoal2:#1b1916; --gold:#A9842B; --gold-line:#CBA24A;
   --bg:#0f1c2b; --panel:#fff; --line:#e2e8f0; --ink:#1e293b; --muted:#64748b;
   --green:#16a34a; --red:#dc2626; --amber:#d97706;
   --c-mange:#38b6e8; --c-tonneau:#7fc93a; --c-ronde:#e67e22; --c-rect:#ff4fb0;
@@ -22,10 +22,10 @@ button{font-family:inherit;cursor:pointer;border:none}
 .app{display:flex;flex-direction:column;height:100vh;height:100dvh}
 
 /* ---- top bar ---- */
-header{background:linear-gradient(100deg,var(--navy),var(--navy2));color:#fff;padding:8px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 2px 10px rgba(0,0,0,.3);z-index:30}
+header{background:linear-gradient(100deg,var(--charcoal),var(--charcoal2));color:#fff;padding:8px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 2px 10px rgba(0,0,0,.35);border-bottom:2px solid var(--gold-line);z-index:30}
 header .brand{display:flex;flex-direction:column;line-height:1.05}
-header .brand b{font-size:15px;font-weight:800;letter-spacing:.2px}
-header .brand span{font-size:11px;color:#b9c7d8}
+header .brand b{font-family:'Cinzel',serif;font-size:15px;font-weight:700;letter-spacing:.6px;color:#f3ecdd}
+header .brand span{font-size:11px;color:#c7b487}
 .stats{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
 .stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:5px 11px;min-width:70px}
 .stat .k{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:#9fb1c6}
@@ -40,9 +40,9 @@ header .brand span{font-size:11px;color:#b9c7d8}
 .syncpill.ok{background:rgba(34,197,94,.28)}
 .syncpill.save{background:rgba(230,126,34,.32)}
 .syncpill.off{background:rgba(220,38,38,.30)}
-.eventbar{display:flex;align-items:center;gap:7px;padding:7px 12px;background:#16293f;border-top:1px solid rgba(255,255,255,.08);overflow-x:auto;z-index:20;flex-wrap:nowrap}
+.eventbar{display:flex;align-items:center;gap:7px;padding:7px 12px;background:#26231f;border-top:1px solid rgba(203,162,74,.42);overflow-x:auto;z-index:20;flex-wrap:nowrap}
 .evtab{flex:none;display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);color:#cdd9e6;border-radius:9px;padding:7px 12px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
-.evtab.on{background:var(--orange);color:#fff}
+.evtab.on{background:var(--orange);color:#241f15}
 .evtab button{background:transparent;color:inherit;font-size:13px;padding:0 1px;opacity:.75}
 .evtab button:hover{opacity:1}
 .evtadd{flex:none;background:transparent;border:1px dashed rgba(255,255,255,.3);color:#cdd9e6;border-radius:9px;padding:7px 12px;font-size:12.5px;font-weight:600;white-space:nowrap}
@@ -72,7 +72,7 @@ header .brand span{font-size:11px;color:#b9c7d8}
 .fz .rot::after{content:"↻";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--navy);font-weight:700}
 .fz .rot::before{content:"";position:absolute;left:50%;top:15px;width:2px;height:11px;background:var(--navy);transform:translateX(-50%)}
 .fz.pulse{animation:pulse 1s ease infinite}
-@keyframes pulse{0%,100%{outline-color:var(--orange)}50%{outline-color:transparent}}
+@keyframes pulse{0%,100%{outline-color:var(--gold-line)}50%{outline-color:transparent}}
 
 /* zoom + opacity controls */
 .mapctl{position:absolute;left:12px;bottom:12px;display:flex;flex-direction:column;gap:8px;z-index:25}
@@ -83,17 +83,17 @@ header .brand span{font-size:11px;color:#b9c7d8}
 .mapctl input[type=range]{width:90px;accent-color:var(--orange)}
 .modepill{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:25;background:rgba(15,28,43,.9);border:1px solid rgba(255,255,255,.18);border-radius:30px;padding:4px;display:flex;gap:3px;backdrop-filter:blur(4px)}
 .modepill button{padding:7px 15px;border-radius:24px;color:#cdd9e6;background:transparent;font-size:12.5px;font-weight:700}
-.modepill button.on{background:var(--orange);color:#fff}
+.modepill button.on{background:var(--orange);color:#241f15}
 .hint{position:absolute;top:58px;left:50%;transform:translateX(-50%);z-index:24;background:rgba(230,126,34,.95);color:#fff;padding:7px 15px;border-radius:24px;font-size:12.5px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.4);max-width:90%;text-align:center}
 
 /* ---- sidebar ---- */
 .side{width:360px;max-width:42vw;background:var(--panel);display:flex;flex-direction:column;box-shadow:-3px 0 14px rgba(0,0,0,.25);z-index:10}
 .tabs{display:flex;border-bottom:1px solid var(--line)}
 .tabs button{flex:1;padding:13px 6px;font-size:13px;font-weight:700;color:var(--muted);background:#fff;border-bottom:3px solid transparent}
-.tabs button.on{color:var(--navy);border-bottom-color:var(--orange)}
+.tabs button.on{color:var(--navy);border-bottom-color:var(--gold-line)}
 .side .body{flex:1;overflow:auto;padding:12px}
 .search{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:13px;margin-bottom:9px}
-.search:focus{outline:none;border-color:var(--orange)}
+.search:focus{outline:none;border-color:var(--gold-line)}
 .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px}
 .chip{font-size:11.5px;font-weight:600;padding:5px 10px;border-radius:18px;background:#eef2f7;color:#475569;border:1px solid transparent}
 .chip.on{background:var(--navy);color:#fff}
@@ -158,7 +158,7 @@ header .brand span{font-size:11px;color:#b9c7d8}
   .palette{grid-template-columns:1fr 1fr}
   .togglefab{display:flex}
 }
-.togglefab{display:none;position:fixed;right:14px;bottom:14px;z-index:55;background:var(--orange);color:#fff;border-radius:30px;padding:13px 18px;font-weight:700;font-size:14px;box-shadow:0 6px 18px rgba(0,0,0,.35);align-items:center;gap:7px}
+.togglefab{display:none;position:fixed;right:14px;bottom:14px;z-index:55;background:var(--orange);color:#241f15;border-radius:30px;padding:13px 18px;font-weight:700;font-size:14px;box-shadow:0 6px 18px rgba(0,0,0,.35);align-items:center;gap:7px}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:11px 18px;border-radius:11px;font-size:13px;font-weight:600;opacity:0;transition:.25s;z-index:70;box-shadow:0 8px 24px rgba(0,0,0,.4);pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #tip{position:fixed;z-index:65;background:#0f1c2b;color:#fff;border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:10px 13px;max-width:270px;font-size:12.5px;line-height:1.45;box-shadow:0 12px 34px rgba(0,0,0,.5);pointer-events:none;display:none}
@@ -169,20 +169,68 @@ header .brand span{font-size:11px;color:#b9c7d8}
 #tip .ri .nm{font-weight:700}
 #tip .ri .mt{color:#9fb1c6;font-size:11.5px}
 #tip .ri .pr{color:#f0a85a}
+
+/* --- finition « domaine » --- */
+.modal h3{background:linear-gradient(100deg,var(--charcoal),var(--charcoal2));color:#f3ecdd;font-family:'Cinzel',serif;font-weight:600;letter-spacing:.4px;border-bottom:2px solid var(--gold-line)}
+.modal h3 button{background:rgba(255,255,255,.16)}
+.side{background:#faf8f4}
+.tabs{background:#faf8f4;border-bottom:1px solid #e7e0d4}
+.tabs button{background:#faf8f4;text-transform:uppercase;letter-spacing:.6px;font-size:12px}
+.tabs button.on{color:var(--charcoal);border-bottom-color:var(--gold-line)}
+.sectlabel{color:#9a7d3c;letter-spacing:.8px}
+.stat{background:rgba(255,255,255,.06);border-color:rgba(203,162,74,.42)}
+.stat .k{color:#cbb27e}
+.stat .v small{color:#a99873}
+.stagewrap{box-shadow:inset 0 0 0 1px rgba(0,0,0,.22), inset 0 0 90px rgba(0,0,0,.33)}
+.search:focus{border-color:var(--gold-line)}
+.chip.on{background:var(--charcoal)}
+.chip.on.attente{background:var(--amber)}
+.rcard.sel{box-shadow:0 0 0 2px rgba(203,162,74,.5)}
+.btn{border:1px solid rgba(196,154,58,0)}
+.btn:hover{border-color:rgba(203,162,74,.6)}
+.modepill{border-color:rgba(203,162,74,.5)}
+.modepill button.on{color:#241f15}
+.tinybtn{color:var(--charcoal)}
+.togglefab{background:var(--gold);color:#241f15}
+#login{position:fixed;inset:0;z-index:200;background:linear-gradient(140deg,#2c2925,#16140f);display:none;align-items:center;justify-content:center;padding:20px}
+#login .logcard{background:#faf8f4;border-radius:16px;border-top:3px solid var(--gold-line);padding:26px 24px;width:300px;max-width:92vw;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+#login .logttl{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:#2c2925;letter-spacing:.6px}
+#login .logsub{font-size:12px;color:#9a7d3c;margin:2px 0 16px;letter-spacing:.4px}
+#login .loglab{display:block;text-align:left;font-size:12px;color:#475569;margin-bottom:4px;font-weight:600}
+#login input{width:100%;padding:11px 12px;border:1px solid #d8d2c6;border-radius:10px;font-size:15px;box-sizing:border-box}
+#login input:focus{outline:none;border-color:var(--gold-line)}
+#login button{width:100%;margin-top:12px;background:var(--gold);color:#241f15;border:none;border-radius:10px;padding:12px;font-weight:700;font-size:14px;cursor:pointer}
+#login .logerr{color:#b91c1c;font-size:12px;min-height:16px;margin-top:8px}
+.roBadge{display:none;align-items:center;gap:5px;background:rgba(255,255,255,.10);border:0.5px solid rgba(203,162,74,.5);color:#e9dcc0;border-radius:9px;padding:6px 10px;font-size:11.5px;font-weight:700}
+body:not(.adm) .adminOnly{display:none!important}
+body.ro .editOnly{display:none!important}
+body.ro .modepill{display:none!important}
 </style>
 </head>
 <body>
+<div id="login" style="display:none">
+  <div class="logcard">
+    <div class="logttl">Domaine Peraldi</div>
+    <div class="logsub">Gestion des événements</div>
+    <label class="loglab">Code d'accès</label>
+    <input id="logCode" type="password" autocomplete="off" placeholder="votre code">
+    <button id="logBtn">Entrer</button>
+    <div id="logErr" class="logerr"></div>
+  </div>
+</div>
 <div class="app">
   <header>
     <div class="brand"><b>Gestion des événements · Domaine Peraldi</b><span>—</span></div>
     <div class="stats" id="stats"></div>
     <div class="actions">
       <button class="btn" id="modeleBtn">📄 Modèle</button>
-      <button class="btn" id="importBtn">⬆ Importer CSV</button>
+      <button class="btn editOnly" id="importBtn">⬆ Importer CSV</button>
       <button class="btn" id="exportBtn">⬇ Exporter</button>
       <button class="btn" id="planPdfBtn">🖨 PDF</button>
+      <button class="btn adminOnly" id="accessBtn">👥 Accès</button>
       <button class="btn ghost" id="helpBtn">?</button>
       <span id="syncPill" class="syncpill off">…</span>
+      <span class="roBadge" id="roBadge">🔒 Lecture seule</span>
       <input type="file" id="fileIn" accept=".csv" hidden>
       <input type="file" id="bgIn" accept="image/*" hidden>
     </div>
@@ -248,7 +296,7 @@ function cfg(f){const t=TYPES[f.type]||TYPES['custom'];
 const CAT_COLORS={'Famille':'#0ea5e9','Grand public':'#8b5cf6','Joueur':'#16a34a','Bénévole':'#d97706','Sponsor':'#dc2626','Partenaire':'#0d9488','Mairie':'#7c3aed','Staff':'#475569'};
 
 const API="/.netlify/functions/state";
-let localTs=0, pendingSave=false, pushTimer=null;
+let localTs=0, pendingSave=false, pushTimer=null; let ME=null;
 let DB=loadDB();
 let S=curEvent();
 let scale=1, mode='resa', selResa=null, openFurnId=null;
@@ -258,10 +306,10 @@ function defaultDB(){
   const furn=DEFAULT_FURN.map((f,i)=>({id:'f'+i,n:f.n??null,type:f.type,x:f.x,y:f.y,
      cap:(TYPES[f.type]?.cap??0),L:f.L,Wd:f.Wd,ang:f.ang||0,label:f.label}));
   const resa=DEFAULT_RESA.map(r=>({...r,tableId:null}));
-  return {curId:'evt0',events:[{id:'evt0',name:'Bal du GFCA · 11 juin 2026 · Peraldi',organizer:'GFCA Handball',maxCap:0,builtin:true,bg:null,w:2000,h:2000,furn,resa}]};
+  return normalize({curId:'evt0',users:[{id:'u_admin',name:'Admin',code:'gfca-admin',role:'admin'}],events:[{id:'evt0',name:'Bal du GFCA · 11 juin 2026 · Peraldi',organizer:'GFCA Handball',maxCap:0,builtin:true,bg:null,w:2000,h:2000,furn,resa,access:[]}]});
 }
 function loadDB(){
-  try{const raw=localStorage.getItem('gfca_evt_cache');if(raw){const c=JSON.parse(raw);if(c&&c.db&&c.db.events&&c.db.events.length){localTs=c.ts||0;return c.db;}}}catch(e){}
+  try{const raw=localStorage.getItem('gfca_evt_cache');if(raw){const c=JSON.parse(raw);if(c&&c.db&&c.db.events&&c.db.events.length){localTs=c.ts||0;return normalize(c.db);}}}catch(e){}
   return defaultDB();
 }
 function cacheSave(){try{localStorage.setItem('gfca_evt_cache',JSON.stringify({ts:localTs,db:DB}));}catch(e){}}
@@ -276,19 +324,40 @@ async function pullRemote(){
   try{const res=await fetch(API,{cache:'no-store'});if(!res.ok)throw 0;const j=await res.json();
     if(j&&j.db&&j.db.events&&(j.ts||0)>localTs){
       if(document.getElementById('modalBg').classList.contains('show'))return;
-      DB=j.db;localTs=j.ts;if(!curEvent())DB.curId=DB.events[0].id;S=curEvent();cacheSave();
-      renderEventTabs();fit();renderAll();}
+      DB=normalize(j.db);localTs=j.ts;if(!curEvent())DB.curId=DB.events[0].id;S=curEvent();cacheSave();gateRender();}
     setSync('ok');}
   catch(e){setSync('off');}
 }
 async function initSync(){
   try{const res=await fetch(API,{cache:'no-store'});if(!res.ok)throw 0;const j=await res.json();
-    if(j&&j.db&&j.db.events){if((j.ts||0)>localTs){DB=j.db;localTs=j.ts;S=curEvent();cacheSave();renderEventTabs();fit();renderAll();}setSync('ok');}
+    if(j&&j.db&&j.db.events){if((j.ts||0)>localTs){DB=normalize(j.db);localTs=j.ts;cacheSave();}setSync('ok');}
     else{await pushRemote();}}
   catch(e){setSync('off');}
 }
 function setSync(s){const el=document.getElementById('syncPill');if(!el)return;el.className='syncpill '+s;
   el.textContent=s==='save'?'⟳ Sauvegarde…':s==='ok'?'✓ Synchronisé':'⚠ Hors ligne';}
+/* ---------- profils / accès (léger, côté appli) ---------- */
+function normalize(db){if(!db)return db;
+  if(!Array.isArray(db.users)||!db.users.length)db.users=[{id:'u_admin',name:'Admin',code:'gfca-admin',role:'admin'}];
+  if(!db.users.some(u=>u.role==='admin'))db.users[0].role='admin';
+  (db.events||[]).forEach(e=>{if(!Array.isArray(e.access))e.access=[];});return db;}
+function myCode(){try{return localStorage.getItem('gfca_code')||'';}catch(e){return '';}}
+function resolveMe(){const c=myCode();ME=(DB.users||[]).find(u=>u.code&&u.code===c)||null;return ME;}
+function isAdmin(){return !!(ME&&ME.role==='admin');}
+function rightFor(e){if(!e)return null;if(isAdmin())return 'edit';const a=(e.access||[]).find(a=>a.u===(ME&&ME.id));return a?a.r:null;}
+function canSee(e){return isAdmin()||rightFor(e)!=null;}
+function visibleEvents(){return DB.events.filter(canSee);}
+function RW(){return !!ME&&rightFor(curEvent())==='edit';}
+function applyRole(){document.body.classList.toggle('adm',isAdmin());document.body.classList.toggle('ro',!RW());
+  const rb=document.getElementById('roBadge');if(rb)rb.style.display=(ME&&!RW())?'inline-flex':'none';}
+function showLogin(msg){const o=document.getElementById('login');if(!o)return;o.style.display='flex';
+  document.getElementById('logErr').textContent=msg||'';document.getElementById('logCode').value='';setTimeout(()=>document.getElementById('logCode').focus(),60);}
+function hideLogin(){const o=document.getElementById('login');if(o)o.style.display='none';}
+function doLogin(){const c=document.getElementById('logCode').value.trim();try{localStorage.setItem('gfca_code',c);}catch(e){}
+  if(resolveMe()){hideLogin();gateRender();}else{showLogin('Code non reconnu.');}}
+function logout(){try{localStorage.removeItem('gfca_code');}catch(e){}ME=null;closeModal();showLogin('');}
+function ensureVisible(){const vis=visibleEvents();if(!vis.length)return;if(!vis.some(e=>e.id===DB.curId)){DB.curId=vis[0].id;S=curEvent();}}
+function gateRender(){resolveMe();if(!ME){showLogin('');return;}hideLogin();if(visibleEvents().length===0){DB._empty=DB._empty||{id:'_empty',name:'',organizer:'',maxCap:0,builtin:false,bg:'',w:1200,h:800,furn:[],resa:[],access:[]};S=DB._empty;applyRole();renderEventTabs();fit();renderAll();return;}ensureVisible();if(!RW())mode='resa';applyRole();renderEventTabs();fit();renderAll();}
 
 function occ(fid){return S.resa.filter(r=>r.tableId===fid).reduce((s,r)=>s+(+r.pax||0),0);}
 function resasAt(fid){return S.resa.filter(r=>r.tableId===fid);}
@@ -379,8 +448,8 @@ function attachRotate(hd,el,f){
     document.addEventListener('pointermove',onMove);document.addEventListener('pointerup',onUp);});
 }
 /* ---------- assign logic ---------- */
-function assign(resaId,fid){const r=R(resaId);if(!r)return;r.tableId=fid;save();toast('Placé : '+r.nom);}
-function unassign(resaId){const r=R(resaId);if(r){r.tableId=null;save();}}
+function assign(resaId,fid){if(!RW())return;const r=R(resaId);if(!r)return;r.tableId=fid;save();toast('Placé : '+r.nom);}
+function unassign(resaId){if(!RW())return;const r=R(resaId);if(r){r.tableId=null;save();}}
 
 /* ---------- stats ---------- */
 function renderStats(){
@@ -412,7 +481,7 @@ function renderResaPanel(){
     if(fPlaced==='À placer'&&r.tableId)return false;
     return true;
   });
-  b.innerHTML=`<button class="addresa" id="addResaBtn">＋ Ajouter une réservation</button>
+  b.innerHTML=`<button class="addresa editOnly" id="addResaBtn">＋ Ajouter une réservation</button>
    <input class="search" id="rsearch" placeholder="🔍 Rechercher un nom, une préférence…" value="${fSearch}">
    <div class="filters" id="placedF">
      ${['Tous','À placer','Placées'].map(p=>`<button class="chip ${fPlaced===p?'on':''}" data-p="${p}">${p}</button>`).join('')}
@@ -428,12 +497,12 @@ function renderResaPanel(){
     const pref=isPref(r.notes);
     const d=document.createElement('div');
     d.className='rcard'+(r.tableId?' placed':'')+(String(selResa)===String(r.id)?' sel':'');
-    d.innerHTML=`<div class="top"><div class="nom">${esc(r.nom)}</div><div style="display:flex;gap:6px;align-items:center"><div class="pax">${r.pax} pers.</div><button class="iconbtn" data-edit="${r.id}" title="Modifier / supprimer">✎</button></div></div>
+    d.innerHTML=`<div class="top"><div class="nom">${esc(r.nom)}</div><div style="display:flex;gap:6px;align-items:center"><div class="pax">${r.pax} pers.</div><button class="iconbtn editOnly" data-edit="${r.id}" title="Modifier / supprimer">✎</button></div></div>
       <div class="meta"><span class="cat" style="background:${catColor(r.cat)}1f;color:${catColor(r.cat)}">${esc((r.cat||'').trim())||'—'}</span>
       ${r.tel?'<span>📞 '+esc(r.tel)+'</span>':''}</div>
       ${r.notes?`<div class="note ${pref?'pref':''}">${pref?'★ ':''}${esc(r.notes)}</div>`:''}
       ${f?`<div class="assigned">✓ ${f.n!=null?'Table '+f.n:(cfg(f).label)} (${cfg(f).short}) <button data-un="${r.id}">retirer</button></div>`
-         :`<button class="tinybtn" data-pick="${r.id}">${String(selResa)===String(r.id)?'➜ Touchez un emplacement sur le plan':'Placer sur le plan'}</button>`}`;
+         :`<button class="tinybtn editOnly" data-pick="${r.id}">${String(selResa)===String(r.id)?'➜ Touchez un emplacement sur le plan':'Placer sur le plan'}</button>`}`;
     rl.appendChild(d);
   });
   b.querySelector('#rsearch').addEventListener('input',e=>{fSearch=e.target.value;const p=e.target.selectionStart;renderResaPanel();const ni=document.getElementById('rsearch');ni.focus();ni.setSelectionRange(p,p);});
@@ -460,7 +529,7 @@ function openResaForm(id){
    <div class="editrow"><label>Email</label><input id="fMail" value="${r?esc(r.email||''):''}"></div>
    <div class="editrow"><label>Statut</label><select id="fStat"><option ${sel(!r||r.statut==='Confirmée',true)}>Confirmée</option><option ${sel(r&&r.statut&&r.statut!=='Confirmée',true)}>En attente</option></select></div>
    <div class="editrow"><label>Préférence</label><input id="fNote" value="${r?esc(r.notes||''):''}" placeholder="ex : proche scène, tonneau, table habituelle…"></div>
-   <button class="addresa" id="saveResa" style="background:var(--orange);color:#fff;border:none;margin-top:4px">${r?'✓ Enregistrer les modifications':'＋ Ajouter la réservation'}</button>
+   <button class="addresa" id="saveResa" style="background:var(--orange);color:#241f15;border:none;margin-top:4px">${r?'✓ Enregistrer les modifications':'＋ Ajouter la réservation'}</button>
    ${r?'<button class="del" id="delResa">🗑 Supprimer cette réservation</button>':''}
    </div>`;
   document.getElementById('modalBg').classList.add('show');
@@ -485,7 +554,7 @@ function renderEditPanel(){
   b.innerHTML=`<div class="sectlabel">Ajouter un meuble (apparaît au centre du plan)</div>
    <div class="palette">${addable.map(t=>`<button data-add="${t}" style="background:${TYPES[t].color}">
      <span class="ico" style="background:${TYPES[t].color}"></span>${TYPES[t].label}</button>`).join('')}</div>
-   <button class="addresa" id="addCustomBtn" style="margin-bottom:14px">＋ Meuble personnalisé (nom · couleur · forme)</button>
+   <button class="addresa editOnly" id="addCustomBtn" style="margin-bottom:14px">＋ Meuble personnalisé (nom · couleur · forme)</button>
    <div class="sectlabel">Mode édition</div>
    <p style="font-size:12.5px;color:#475569;line-height:1.5;margin:0 0 10px">
    • <b>Glissez</b> un meuble pour le déplacer.<br>• <b>Touchez</b>-le pour modifier numéro, type, capacité ou le supprimer.<br>
@@ -502,7 +571,7 @@ function renderEditPanel(){
     inv.appendChild(row);
   });
 }
-function addFurn(type){
+function addFurn(type){if(!RW())return;
   const wrap=document.getElementById('stagewrap');
   const cx=(wrap.scrollLeft+wrap.clientWidth/2)/scale, cy=(wrap.scrollTop+wrap.clientHeight/2)/scale;
   const f={id:'f'+Date.now(),type,x:cx,y:cy,cap:TYPES[type].cap,ang:0};
@@ -519,7 +588,7 @@ function openCustomForm(){
    <div class="editrow"><label>Couleur</label><input id="cColor" type="color" value="#8a5cf6" style="height:38px;padding:3px"></div>
    <div class="editrow"><label>Invités ?</label><label style="width:auto;font-weight:500"><input type="checkbox" id="cAssign"> peut accueillir des réservations</label></div>
    <div class="editrow" id="cCapRow" style="display:none"><label>Capacité</label><input id="cCap" type="number" min="0" value="8"></div>
-   <button class="addresa" id="cAdd" style="background:var(--orange);color:#fff;border:none">＋ Ajouter au plan</button></div>`;
+   <button class="addresa" id="cAdd" style="background:var(--orange);color:#241f15;border:none">＋ Ajouter au plan</button></div>`;
   document.getElementById('modalBg').classList.add('show');
   document.getElementById('mclose').onclick=closeModal;
   document.getElementById('cAssign').onchange=e=>document.getElementById('cCapRow').style.display=e.target.checked?'flex':'none';
@@ -566,10 +635,10 @@ function openFurn(id){openFurnId=id;const f=furnById(id);if(!f)return;const t=cf
       <input id="capIn" type="number" min="0" value="${f.cap}"></div></div>`;
     html+=`<div class="sectlabel">Réservations à cet emplacement</div><div class="assignlist">`;
     if(!here.length)html+=`<div class="empty" style="padding:14px">Vide</div>`;
-    here.forEach(r=>html+=`<div class="ai"><span>${esc(r.nom)} · ${r.pax} pers.</span><button data-un2="${r.id}">retirer</button></div>`);
-    html+=`</div><div class="sectlabel">Ajouter une réservation ici</div>
+    here.forEach(r=>html+=`<div class="ai"><span>${esc(r.nom)} · ${r.pax} pers.</span><button class="editOnly" data-un2="${r.id}">retirer</button></div>`);
+    html+=`</div><div class="editOnly"><div class="sectlabel">Ajouter une réservation ici</div>
      <div class="qsearch"><input class="search" id="qs" placeholder="🔍 chercher une résa à placer…" style="margin:0">
-     <div class="results" id="qres"></div></div>`;
+     <div class="results" id="qres"></div></div></div>`;
   }
   if(editMode){
     const c=cfg(f);
@@ -616,7 +685,7 @@ document.getElementById('modalBg').onclick=e=>{if(e.target.id==='modalBg')closeM
 
 /* ---------- import / export ---------- */
 document.getElementById('importBtn').onclick=()=>document.getElementById('fileIn').click();
-document.getElementById('fileIn').onchange=e=>{const file=e.target.files[0];if(!file)return;
+document.getElementById('fileIn').onchange=e=>{if(!RW())return;const file=e.target.files[0];if(!file)return;
   const rd=new FileReader();rd.onload=()=>{importCSV(rd.result);e.target.value='';};rd.readAsText(file,'utf-8');};
 function importCSV(text){
   if(/Ã|Â/.test(text)){try{const dec=new TextDecoder('latin1');}catch(e){}}
@@ -680,8 +749,8 @@ function openPlanPdf(){const m=document.getElementById('modal');
   m.innerHTML=`<h3><span>Exporter en PDF</span><button id="mclose">×</button></h3><div class="mbody">
    <div class="sectlabel">Plan de salle (à imprimer)</div>
    <p style="font-size:12.5px;color:#475569;margin-top:0">Fond + mobilier + placements, tels qu'affichés.</p>
-   <div style="display:flex;gap:10px;margin-bottom:16px"><button class="addresa" data-fmt="A4" style="background:var(--orange);color:#fff;border:none;margin:0">Plan A4</button>
-   <button class="addresa" data-fmt="A3" style="background:var(--orange);color:#fff;border:none;margin:0">Plan A3</button></div>
+   <div style="display:flex;gap:10px;margin-bottom:16px"><button class="addresa" data-fmt="A4" style="background:var(--orange);color:#241f15;border:none;margin:0">Plan A4</button>
+   <button class="addresa" data-fmt="A3" style="background:var(--orange);color:#241f15;border:none;margin:0">Plan A3</button></div>
    <div class="sectlabel">Liste de placement</div>
    <p style="font-size:12.5px;color:#475569;margin-top:0">Tableau : table, nom, nb de personnes, catégorie, statut, préférence.</p>
    <button class="addresa" id="listPdf" style="background:var(--navy);color:#fff;border:none;margin:0">📋 Liste de placement (A4)</button></div>`;
@@ -705,7 +774,7 @@ function exportListPDF(){
     headStyles:{fillColor:[31,58,95],textColor:255,fontStyle:'bold'},
     alternateRowStyles:{fillColor:[244,247,251]},
     columnStyles:{0:{cellWidth:18,fontStyle:'bold'},1:{cellWidth:50},2:{cellWidth:12,halign:'center'},3:{cellWidth:26},4:{cellWidth:22},5:{cellWidth:'auto'}},
-    didDrawPage:(d)=>{pdf.setFont('helvetica','bold');pdf.setTextColor(31,58,95);pdf.setFontSize(14);pdf.text(e.name,10,12);
+    didDrawPage:(d)=>{pdf.setFont('times','bold');pdf.setTextColor(31,58,95);pdf.setFontSize(15);pdf.text(e.name,10,12);
       pdf.setFont('helvetica','normal');pdf.setTextColor(90,100,115);pdf.setFontSize(8.5);pdf.text(sub,10,18);
       pdf.setFontSize(8);pdf.setTextColor(120,130,140);pdf.text('page '+d.pageNumber,pdf.internal.pageSize.getWidth()-22,pdf.internal.pageSize.getHeight()-6);}
   });
@@ -720,7 +789,7 @@ async function exportPlanPDF(format){
   const pdf=new jsPDF({orientation:land?'landscape':'portrait',unit:'mm',format:format.toLowerCase()});
   const pw=pdf.internal.pageSize.getWidth(), ph=pdf.internal.pageSize.getHeight();
   const e=curEvent();const margin=8, titleH=20;
-  pdf.setFont('helvetica','bold');pdf.setTextColor(31,58,95);pdf.setFontSize(15);pdf.text(e.name,margin,11);
+  pdf.setFont('times','bold');pdf.setTextColor(31,58,95);pdf.setFontSize(16);pdf.text(e.name,margin,11);
   pdf.setFont('helvetica','normal');pdf.setTextColor(90,100,115);pdf.setFontSize(9);
   const totP=S.resa.reduce((s,r)=>s+(+r.pax||0),0),plP=S.resa.filter(r=>r.tableId).reduce((s,r)=>s+(+r.pax||0),0);
   pdf.text((e.organizer?e.organizer+'   ·   ':'')+'Plan de salle   ·   couverts placés '+plP+'/'+totP+(e.maxCap?'   ·   jauge '+e.maxCap:'')+'   ·   '+new Date().toLocaleDateString('fr-FR'),margin,17);
@@ -746,15 +815,17 @@ document.getElementById('helpBtn').onclick=()=>{const m=document.getElementById(
    <p><b>Réservations (par événement) :</b> <i>📄 Modèle</i> télécharge le fichier vierge à faire remplir ; une fois rempli, <i>⬆ Importer CSV</i> l'injecte dans l'<b>événement actif</b> (placements conservés, nouvelles résas ajoutées). Tu peux aussi saisir les résas à la main (＋ Ajouter une réservation).</p>
    <p><b>Export :</b> <i>⬇ Exporter</i> sort un CSV (qui est placé où, tables, couverts) pour l'événement courant.</p>
    <p style="background:#fff7ef;border:1px solid #f5d7b0;border-radius:10px;padding:10px"><b>Sauvegarde :</b> tout est enregistré automatiquement dans <b>ce navigateur</b> (tous les événements). Pour un usage partagé/multi-appareils sur Netlify, on branchera Netlify Blobs.</p>
-   <button class="del" style="background:#fee2e2" id="resetAll">↺ Tout réinitialiser (supprime TOUS les événements)</button>
+   <button class="del" id="logoutBtn" style="background:#eef2f7">🔓 Changer de code / se déconnecter</button>
+   <button class="del adminOnly" style="background:#fee2e2" id="resetAll">↺ Tout réinitialiser (supprime TOUS les événements)</button>
    </div>`;
   document.getElementById('modalBg').classList.add('show');
   document.getElementById('mclose').onclick=closeModal;
-  document.getElementById('resetAll').onclick=()=>{if(confirm('Réinitialiser TOUS les événements (pour tout le monde) ? Tout sera perdu.')){localStorage.removeItem('gfca_evt_cache');DB=defaultDB();localTs=Date.now();S=curEvent();closeModal();renderEventTabs();fit();renderAll();pushRemote();}};
+  document.getElementById('logoutBtn').onclick=logout;
+  document.getElementById('resetAll').onclick=()=>{if(!isAdmin())return;if(confirm('Réinitialiser TOUS les événements (pour tout le monde) ? Tout sera perdu.')){localStorage.removeItem('gfca_evt_cache');DB=normalize(defaultDB());localTs=Date.now();S=curEvent();closeModal();gateRender();pushRemote();}};
 };
 
 /* ---------- modes / tabs / zoom ---------- */
-function setMode(m){mode=m;
+function setMode(m){if(m==='edit'&&!RW())return;mode=m;
   document.getElementById('mResa').classList.toggle('on',m==='resa');
   document.getElementById('mEdit').classList.toggle('on',m==='edit');
   document.getElementById('tabResa').classList.toggle('on',m==='resa');
@@ -780,31 +851,43 @@ function closeSide(){document.getElementById('side').classList.remove('open');}
 
 function renderEventTabs(){
   const bar=document.getElementById('eventbar');
-  bar.innerHTML=DB.events.map(e=>`<div class="evtab ${e.id===DB.curId?'on':''}" data-ev="${e.id}">
+  const evs=visibleEvents();
+  if(!evs.length){bar.innerHTML='<div class="evtab" style="opacity:.85">Aucun événement ne vous est attribué</div>';
+    const sp0=document.querySelector('header .brand span');if(sp0)sp0.textContent='—';return;}
+  bar.innerHTML=evs.map(e=>`<div class="evtab ${e.id===DB.curId?'on':''}" data-ev="${e.id}">
      <span>${esc(e.name)}</span>
-     ${e.id===DB.curId?`<button data-ren="${e.id}" title="Paramètres">⚙</button>${DB.events.length>1?`<button data-del="${e.id}" title="Supprimer">×</button>`:''}`:''}
+     ${(e.id===DB.curId&&isAdmin())?`<button data-ren="${e.id}" title="Paramètres">⚙</button><button data-del="${e.id}" title="Supprimer">×</button>`:''}
    </div>`).join('')
-   +`<button class="evtadd" id="evtAdd">＋ Événement</button>`
-   +`<button class="evtbg" id="evtBg">🖼 ${curBg()?'Changer le fond':'Ajouter un fond'}</button>`;
-  bar.querySelectorAll('.evtab').forEach(t=>t.onclick=ev=>{if(ev.target.dataset.ren!=null||ev.target.dataset.del!=null)return;setEvent(t.dataset.ev);});
+   +(isAdmin()?`<button class="evtadd" id="evtAdd">＋ Événement</button>`:'')
+   +`<button class="evtbg editOnly" id="evtBg">🖼 ${curBg()?'Changer le fond':'Ajouter un fond'}</button>`;
+  bar.querySelectorAll('.evtab').forEach(t=>t.onclick=ev=>{if(ev.target.dataset.ren!=null||ev.target.dataset.del!=null)return;if(t.dataset.ev)setEvent(t.dataset.ev);});
   bar.querySelectorAll('[data-ren]').forEach(x=>x.onclick=ev=>{ev.stopPropagation();openEventSettings(x.dataset.ren);});
-  bar.querySelectorAll('[data-del]').forEach(x=>x.onclick=ev=>{ev.stopPropagation();delEvent(x.dataset.del);});
-  document.getElementById('evtAdd').onclick=addEvent;
-  document.getElementById('evtBg').onclick=()=>document.getElementById('bgIn').click();
-  const e=curEvent();const sp=document.querySelector('header .brand span');if(sp)sp.textContent=e.name+(e.organizer?' · '+e.organizer:'');
+  bar.querySelectorAll('[data-del]').forEach(x=>x.onclick=ev=>{ev.stopPropagation();deleteEvent(x.dataset.del);});
+  const ea=document.getElementById('evtAdd');if(ea)ea.onclick=addEvent;
+  document.getElementById('evtBg').onclick=()=>{if(!RW())return;document.getElementById('bgIn').click();};
+  const e=curEvent();const sp=document.querySelector('header .brand span');if(sp)sp.textContent=(e?e.name:'')+(e&&e.organizer?' · '+e.organizer:'');
 }
-function openEventSettings(id){const e=DB.events.find(x=>x.id===id);const m=document.getElementById('modal');
+function openEventSettings(id){if(!isAdmin())return;const e=DB.events.find(x=>x.id===id);const m=document.getElementById('modal');
+  const orgas=DB.users.filter(u=>u.role!=='admin');
+  const accRows=orgas.length?orgas.map(u=>{const a=(e.access||[]).find(x=>x.u===u.id);
+     return `<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+      <label style="flex:1;display:flex;gap:6px;align-items:center;font-size:13px"><input type="checkbox" data-acc="${u.id}" ${a?'checked':''}> ${esc(u.name)}</label>
+      <select data-accr="${u.id}" style="padding:6px;border-radius:8px;border:1px solid #d8d2c6"><option value="edit" ${a&&a.r==='edit'?'selected':''}>Édition</option><option value="read" ${a&&a.r==='read'?'selected':''}>Lecture seule</option></select></div>`;}).join(''):'<div style="font-size:12px;color:#94a3b8">Aucun organisateur (ajoute-les via 👥 Accès).</div>';
   m.innerHTML=`<h3><span>Paramètres de l'événement</span><button id="mclose">×</button></h3><div class="mbody">
    <div class="editrow"><label>Nom</label><input id="evN" value="${esc(e.name)}"></div>
    <div class="editrow"><label>Organisateur</label><input id="evO" value="${esc(e.organizer||'')}" placeholder="ex : GFCA Handball"></div>
    <div class="editrow"><label>Jauge max</label><input id="evM" type="number" min="0" value="${e.maxCap||''}" placeholder="nb de personnes"> pers.</div>
-   <button class="addresa" id="evSave" style="background:var(--orange);color:#fff;border:none;margin-top:4px">✓ Enregistrer</button>
+   <div class="sectlabel" style="margin-top:8px">Accès organisateurs</div>${accRows}
+   <button class="addresa" id="evSave" style="background:var(--orange);color:#241f15;border:none;margin-top:6px">✓ Enregistrer</button>
+   <button class="del" id="evDel">🗑 Supprimer cet événement</button>
    </div>`;
   document.getElementById('modalBg').classList.add('show');
   document.getElementById('mclose').onclick=closeModal;
   document.getElementById('evSave').onclick=()=>{e.name=document.getElementById('evN').value.trim()||e.name;
     e.organizer=document.getElementById('evO').value.trim();e.maxCap=parseInt(document.getElementById('evM').value)||0;
+    e.access=orgas.filter(u=>{const cb=document.querySelector('[data-acc="'+u.id+'"]');return cb&&cb.checked;}).map(u=>({u:u.id,r:document.querySelector('[data-accr="'+u.id+'"]').value}));
     save();closeModal();renderEventTabs();renderStats();toast('Paramètres enregistrés');};
+  document.getElementById('evDel').onclick=()=>deleteEvent(id);
 }
 function downloadTemplate(){const e=curEvent();
   const head=['N°','Date réception','Nom / Structure','Catégorie','Nb personnes','Numéro de contact','Email','Statut','Notes'];
@@ -817,15 +900,18 @@ function downloadTemplate(){const e=curEvent();
   toast('Modèle téléchargé — à remplir puis « Importer CSV »');
 }
 document.getElementById('modeleBtn').onclick=downloadTemplate;
-function setEvent(id){DB.curId=id;S=curEvent();selResa=null;openFurnId=null;save();renderEventTabs();fit();renderAll();}
-function addEvent(){const name=prompt('Nom du nouvel événement :','Nouvel événement');if(!name||!name.trim())return;
-  const id='evt'+Date.now();DB.events.push({id,name:name.trim(),organizer:'',maxCap:0,builtin:true,bg:null,w:2000,h:2000,furn:[],resa:[]});
-  setEvent(id);toast('Événement créé sur le fond Peraldi — ajoute ton mobilier (onglet Mobilier)');}
-function renameEvent(id){const e=DB.events.find(x=>x.id===id);const n=prompt('Renommer l\'événement :',e.name);if(n&&n.trim()){e.name=n.trim();save();renderEventTabs();}}
-function delEvent(id){if(DB.events.length<=1)return;const e=DB.events.find(x=>x.id===id);
-  if(!confirm('Supprimer l\'événement « '+e.name+' » avec son plan et ses résas ?'))return;
-  DB.events=DB.events.filter(x=>x.id!==id);if(DB.curId===id)DB.curId=DB.events[0].id;setEvent(DB.curId);}
-document.getElementById('bgIn').onchange=e=>{const file=e.target.files[0];if(!file)return;
+function setEvent(id){const ev=DB.events.find(e=>e.id===id);if(!canSee(ev))return;DB.curId=id;S=curEvent();selResa=null;openFurnId=null;if(!RW())mode='resa';save();applyRole();renderEventTabs();fit();renderAll();}
+function freshEvent(name){return {id:'evt'+Date.now(),name:(name||'Nouvel événement'),organizer:'',maxCap:0,builtin:true,bg:null,w:2000,h:2000,furn:[],resa:[],access:[]};}
+function addEvent(){if(!isAdmin())return;const name=prompt('Nom du nouvel événement :','Nouvel événement');if(!name||!name.trim())return;
+  const e=freshEvent(name.trim());DB.events.push(e);setEvent(e.id);toast('Événement créé sur le fond Peraldi — ajoute ton mobilier (onglet Mobilier)');}
+function deleteEvent(id){if(!isAdmin())return;const e=DB.events.find(x=>x.id===id);if(!e)return;
+  if(!confirm('Supprimer l\'événement « '+e.name+' » avec son plan et ses réservations ?'))return;
+  closeModal();
+  DB.events=DB.events.filter(x=>x.id!==id);
+  if(DB.events.length===0){const f=freshEvent('Nouvel événement');DB.events.push(f);DB.curId=f.id;}
+  else if(DB.curId===id){DB.curId=DB.events[0].id;}
+  setEvent(DB.curId);toast('Événement supprimé');}
+document.getElementById('bgIn').onchange=e=>{if(!RW())return;const file=e.target.files[0];if(!file)return;
   const rd=new FileReader();rd.onload=()=>{const img=new Image();img.onload=()=>{
     const maxd=1700;let w=img.width,h=img.height;const sc=Math.min(1,maxd/Math.max(w,h));
     w=Math.round(w*sc);h=Math.round(h*sc);
@@ -833,13 +919,44 @@ document.getElementById('bgIn').onchange=e=>{const file=e.target.files[0];if(!fi
     S.bg=cv.toDataURL('image/jpeg',0.82);S.builtin=false;S.w=w;S.h=h;save();renderEventTabs();fit();renderAll();toast('Fond mis à jour');
   };img.src=rd.result;};rd.readAsDataURL(file);e.target.value='';};
 
-function renderAll(){renderStats();renderStage();if(mode==='edit')renderEditPanel();else renderResaPanel();}
+function renderAll(){applyRole();renderStats();renderStage();if(mode==='edit')renderEditPanel();else renderResaPanel();}
 function esc(s){return (s==null?'':''+s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 let toT;function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toT);toT=setTimeout(()=>t.classList.remove('show'),2200);}
 
+function openAccess(){if(!isAdmin())return;const m=document.getElementById('modal');
+  const admin=DB.users.find(u=>u.role==='admin')||DB.users[0];
+  m.innerHTML=`<h3><span>Accès &amp; organisateurs</span><button id="mclose">×</button></h3><div class="mbody">
+   <div class="sectlabel">Administrateur</div>
+   <div class="editrow"><label>Code admin</label><input id="acAdmin" value="${esc(admin.code)}"></div>
+   <div class="sectlabel" style="margin-top:10px">Organisateurs</div><div id="acList"></div>
+   <div class="sectlabel" style="margin-top:10px">Ajouter un organisateur</div>
+   <div style="display:flex;gap:6px;margin-bottom:4px"><input id="acName" placeholder="nom" style="flex:1"><input id="acCode" placeholder="code" style="width:120px"></div>
+   <button class="addresa" id="acAdd" style="background:var(--navy);color:#fff;border:none;margin-top:2px">＋ Ajouter l'organisateur</button>
+   <button class="addresa" id="acSave" style="background:var(--gold);color:#241f15;border:none;margin-top:10px">✓ Enregistrer</button>
+   <p style="font-size:12px;color:#64748b;margin-top:8px">Attribue ensuite un organisateur à un événement via ⚙ sur son onglet (Édition ou Lecture seule).</p>
+   </div>`;
+  document.getElementById('modalBg').classList.add('show');document.getElementById('mclose').onclick=closeModal;
+  function paint(){const l=document.getElementById('acList');const os=DB.users.filter(u=>u.role!=='admin');
+    l.innerHTML=os.length?os.map(u=>`<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px"><input data-uname="${u.id}" value="${esc(u.name)}" style="flex:1"><input data-ucode="${u.id}" value="${esc(u.code)}" style="width:120px"><button class="iconbtn" data-udel="${u.id}" title="Retirer">🗑</button></div>`).join(''):'<div style="font-size:12px;color:#94a3b8;margin:4px 0">Aucun organisateur.</div>';
+    l.querySelectorAll('[data-udel]').forEach(b=>b.onclick=()=>{const id=b.dataset.udel;DB.users=DB.users.filter(u=>u.id!==id);DB.events.forEach(e=>e.access=(e.access||[]).filter(a=>a.u!==id));save();paint();});}
+  paint();
+  document.getElementById('acAdd').onclick=()=>{const n=document.getElementById('acName').value.trim(),c=document.getElementById('acCode').value.trim();
+    if(!n||!c){toast('Nom et code requis');return;}if(DB.users.some(u=>u.code===c)){toast('Ce code est déjà pris');return;}
+    DB.users.push({id:'u_'+Date.now(),name:n,code:c,role:'orga'});save();document.getElementById('acName').value='';document.getElementById('acCode').value='';paint();toast('Organisateur ajouté');};
+  document.getElementById('acSave').onclick=()=>{const ac=document.getElementById('acAdmin').value.trim();
+    if(ac){const ad=DB.users.find(u=>u.role==='admin');if(ad)ad.code=ac;if(ME&&ME.role==='admin'){try{localStorage.setItem('gfca_code',ac);}catch(e){}}}
+    document.querySelectorAll('[data-uname]').forEach(i=>{const u=DB.users.find(x=>x.id===i.dataset.uname);if(u)u.name=i.value.trim()||u.name;});
+    document.querySelectorAll('[data-ucode]').forEach(i=>{const u=DB.users.find(x=>x.id===i.dataset.ucode);if(u&&i.value.trim())u.code=i.value.trim();});
+    save();resolveMe();applyRole();closeModal();renderEventTabs();toast('Accès enregistrés');};
+}
+document.getElementById('accessBtn').onclick=openAccess;
+document.getElementById('logBtn').onclick=doLogin;
+document.getElementById('logCode').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 window.addEventListener('resize',()=>renderStage());
-renderEventTabs();fit();renderAll();
-initSync();setInterval(pullRemote,8000);window.addEventListener('focus',pullRemote);
+DB=normalize(DB);
+gateRender();
+initSync().then(gateRender);
+setInterval(pullRemote,8000);window.addEventListener('focus',pullRemote);
 </script>
 </body>
 </html>
