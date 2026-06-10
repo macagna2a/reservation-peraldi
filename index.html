@@ -239,6 +239,9 @@ body.ro .modepill{display:none!important}
 .arrb{background:#e2e8f0;color:#334155}.arrb.on{background:#1f6f43;color:#fff}
 .placeb{background:var(--orange,#e08a2b);color:#241f15}
 .wempty{text-align:center;color:#94a3b8;padding:30px 10px}
+body.planfull .side{display:none!important}
+body.planfull .togglefab{display:none!important}
+.mapctl #zfull{font-size:13px}
 </style>
 </head>
 <body>
@@ -284,7 +287,7 @@ body.ro .modepill{display:none!important}
       <div class="hint" id="hint" style="display:none"></div>
       <div class="stage" id="stage"></div>
       <div class="mapctl">
-        <div class="grp"><button id="zin">+</button><button id="zout">−</button><button id="zfit" style="font-size:12px">⤢</button></div>
+        <div class="grp"><button id="zin">+</button><button id="zout">−</button><button id="zfit" style="font-size:12px">⤢</button><button id="zfull" title="Plein écran">⛶</button></div>
         <div class="grp opacity">Fond<input type="range" id="opa" min="15" max="100" value="100"></div>
       </div>
     </div>
@@ -1006,6 +1009,7 @@ function openGuide(){const m=document.getElementById('modal');
   document.getElementById('mclose').onclick=closeModal;
 }
 document.getElementById('guideBtn').onclick=openGuide;
+(function(){var zf=document.getElementById('zfull');if(zf)zf.onclick=togglePlanFull;function _sync(){if(!(document.fullscreenElement||document.webkitFullscreenElement)&&document.body.classList.contains('planfull'))document.body.classList.remove('planfull');setTimeout(function(){fit();},60);}document.addEventListener('fullscreenchange',_sync);document.addEventListener('webkitfullscreenchange',_sync);})();
 (function(){var hb=document.getElementById('histBtn');if(hb)hb.onclick=openHistory;var ri=document.getElementById('restoreIn');if(ri)ri.onchange=function(e){var f=e.target.files[0];if(f)restoreBackup(f);e.target.value='';};})();
 (function(){var wb=document.getElementById('welcomeBtn');if(wb)wb.onclick=openWelcome;})();
 /* ---------- modes / tabs / zoom ---------- */
@@ -1170,6 +1174,14 @@ function logChange(a){try{DB.log=DB.log||[];DB.log.push({t:Date.now(),u:(typeof 
 function exportBackup(){try{var payload={app:'gfca-plan',ts:Date.now(),db:DB};var blob=new Blob([JSON.stringify(payload)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sauvegarde_gfca_'+new Date().toISOString().slice(0,16).replace(/[:T]/g,'-')+'.json';a.click();toast('Sauvegarde exportée');}catch(e){toast('Export impossible');}}
 function restoreBackup(file){var rd=new FileReader();rd.onload=function(){try{var data=JSON.parse(rd.result);var db=(data&&data.events)?data:((data&&data.db&&data.db.events)?data.db:null);if(!db||!db.events){toast('Fichier de sauvegarde invalide');return;}if(!confirm('Restaurer cette sauvegarde ? L\'état actuel sera remplacé'+((typeof RW==='function')?' (et synchronisé pour tous)':'')+'.'))return;DB=(typeof normalize==='function')?normalize(db):db;if(!DB.curId||!DB.events.some(function(e){return e.id===DB.curId;}))DB.curId=DB.events[0].id;S=curEvent();logChange('Restauration d\'une sauvegarde');save();if(typeof gateRender==='function')gateRender();else{if(typeof renderEventTabs==='function')renderEventTabs();fit();renderAll();}closeModal();toast('Sauvegarde restaurée');}catch(e){toast('Lecture impossible : '+e.message);}};rd.readAsText(file,'utf-8');}
 function openHistory(){var m=document.getElementById('modal');var log=(DB.log||[]).slice().reverse();var rows=log.length?log.slice(0,200).map(function(L){var when=new Date(L.t).toLocaleString('fr-FR');return '<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:12.5px"><span style="color:#94a3b8;white-space:nowrap">'+when+'</span><span style="flex:1">'+esc(L.a||'')+'</span><span style="color:#64748b;white-space:nowrap">'+esc(L.u||'')+'</span></div>';}).join(''):'<div style="padding:16px;color:#94a3b8">Aucune modification enregistrée pour l\'instant.</div>';m.innerHTML='<h3><span>\ud83d\udd50 Historique & sauvegarde</span><button id="mclose">\u00d7</button></h3><div class="mbody"><div class="sectlabel">Sauvegarde</div><p style="font-size:12.5px;color:#475569;margin:0 0 8px">Exporte un fichier de secours (plan, mobilier, réservations) — réimportable sur n\'importe quel poste, et utile pour transférer entre appareils.</p><div style="display:flex;gap:10px;margin-bottom:14px"><button class="addresa" id="expBk" style="margin:0;background:var(--navy);color:#fff;border:none">\ud83d\udcbe Exporter une sauvegarde</button><button class="addresa editOnly" id="impBk" style="margin:0">\u2191 Restaurer…</button></div><div class="sectlabel">Modifications récentes</div><div style="max-height:46vh;overflow:auto">'+rows+'</div></div>';document.getElementById('modalBg').classList.add('show');document.getElementById('mclose').onclick=closeModal;document.getElementById('expBk').onclick=exportBackup;var ib=document.getElementById('impBk');if(ib)ib.onclick=function(){document.getElementById('restoreIn').click();};}
+
+function togglePlanFull(){
+  var on=!document.body.classList.contains('planfull');
+  document.body.classList.toggle('planfull',on);
+  try{var el=document.documentElement;if(on){var rf=el.requestFullscreen||el.webkitRequestFullscreen;if(rf)rf.call(el);}else{var ef=document.exitFullscreen||document.webkitExitFullscreen;if((document.fullscreenElement||document.webkitFullscreenElement)&&ef)ef.call(document);}}catch(e){}
+  var zb=document.getElementById('zfull');if(zb)zb.title=on?'Quitter le plein écran':'Plein écran';
+  setTimeout(function(){fit();},90);
+}
 
 function renderAll(){applyRole();renderStats();renderStage();if(mode==='edit')renderEditPanel();else renderResaPanel();}
 function esc(s){return (s==null?'':''+s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
