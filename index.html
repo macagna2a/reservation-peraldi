@@ -600,7 +600,7 @@ function openResaForm(id){
 function renderEditPanel(){
   const b=document.getElementById('sideBody');
   const ED=(typeof RW==='function')?'editOnly':'';
-  const addable=['mange-debout','tonneau','ronde','rect','traiteur','ballot','orange-sq'];
+  const hidden=(S.hidden||[]);const addable=['mange-debout','tonneau','ronde','rect','traiteur','ballot','orange-sq'].filter(function(k){return hidden.indexOf(k)<0;});
   const customs=(S.types||[]).filter(t=>!TYPES[t.key]);
   const palette=addable.map(t=>({key:t,label:cfg({type:t}).label,color:cfg({type:t}).color}))
     .concat(customs.map(t=>({key:t.key,label:t.label,color:t.color})));
@@ -627,9 +627,9 @@ function renderEditPanel(){
       <span style="flex:1">${esc(c.label)}</span>
       <b style="color:#64748b">${count[k]||0}</b>
       <button data-rn="${k}" class="${ED}" title="Renommer" style="border:1px solid #d8cfbb;background:#fff;border-radius:7px;padding:2px 9px;font-size:13px">\u270e</button>`;
-    if(!TYPES[k]){var db=document.createElement('button');db.setAttribute('data-del',k);db.className=ED;db.title='Supprimer';db.textContent='🗑';db.style.cssText='border:1px solid #f0c5c0;background:#fff;color:#c0392b;border-radius:7px;padding:2px 9px;font-size:13px;cursor:pointer';db.onclick=function(){removeFurnType(k);};row.appendChild(db);}inv.appendChild(row);
+    {var db=document.createElement('button');db.setAttribute('data-del',k);db.className=ED;db.title='Supprimer';db.textContent='🗑';db.style.cssText='border:1px solid #f0c5c0;background:#fff;color:#c0392b;border-radius:7px;padding:2px 9px;font-size:13px;cursor:pointer';db.onclick=function(){removeFurnType(k);};row.appendChild(db);}inv.appendChild(row);
   });
-  inv.querySelectorAll('[data-rn]').forEach(x=>x.onclick=()=>openCustomForm(x.dataset.rn));
+  inv.querySelectorAll('[data-rn]').forEach(x=>x.onclick=()=>openCustomForm(x.dataset.rn));if((S.hidden||[]).length){var rbtn=document.createElement('button');rbtn.className='addresa '+ED;rbtn.style.marginTop='12px';rbtn.textContent='↩ Rétablir les types masqués ('+S.hidden.length+')';rbtn.onclick=restoreHiddenTypes;b.appendChild(rbtn);}
 }
 function addFurn(type){if(!RW())return;
   const wrap=document.getElementById('stagewrap');
@@ -1186,14 +1186,21 @@ function togglePlanFull(){
 
 function removeFurnType(key){
   if(typeof RW==='function'&&!RW())return;
-  if(TYPES[key]){toast('Les types intégrés ne peuvent pas être supprimés');return;}
-  var def=(S.types||[]).find(function(t){return t.key===key;});var label=def?def.label:key;
+  var isBuiltin=!!TYPES[key];
+  var def=(S.types||[]).find(function(t){return t.key===key;});
+  var label=def?def.label:(TYPES[key]?TYPES[key].label:key);
   var n=S.furn.filter(function(f){return f.type===key;}).length;
-  if(!confirm('Supprimer « '+label+' » de la liste ?'+(n?(' '+n+' meuble(s) de ce type seront retirés du plan'):'')+'.'))return;
+  if(!confirm('Supprimer « '+label+' » de la liste ?'+(n?(' '+n+' meuble(s) de ce type seront retirés du plan'):'')+(isBuiltin?' Type intégré : tu pourras le rétablir.':'.')))return;
   S.furn.filter(function(f){return f.type===key;}).forEach(function(f){resasAt(f.id).forEach(function(r){r.tableId=null;});});
   S.furn=S.furn.filter(function(f){return f.type!==key;});
-  S.types=(S.types||[]).filter(function(t){return t.key!==key;});
+  if(isBuiltin){S.hidden=S.hidden||[];if(S.hidden.indexOf(key)<0)S.hidden.push(key);}
+  else{S.types=(S.types||[]).filter(function(t){return t.key!==key;});}
   logChange('Type supprimé : '+label);save();if(typeof closeModal==='function')closeModal();renderAll();toast('« '+label+' » retiré de la liste');
+}
+function restoreHiddenTypes(){
+  if(typeof RW==='function'&&!RW())return;
+  if(!(S.hidden&&S.hidden.length)){toast('Aucun type masqué');return;}
+  S.hidden=[];logChange('Types intégrés rétablis');save();renderAll();toast('Types intégrés rétablis');
 }
 function attachResize(hd,el,f){
   hd.addEventListener('pointerdown',function(e){e.stopPropagation();e.preventDefault();
