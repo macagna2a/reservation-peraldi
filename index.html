@@ -521,7 +521,7 @@ let fSearch='',fCat='Tous',fStatus='Tous',fPlaced='Tous';
 function renderResaPanel(){
   const b=document.getElementById('sideBody');
   const isConf=r=>(r.statut||'').toLowerCase().startsWith('confirm');
-  let list=S.resa.slice().sort((a,b)=>(a.tableId?1:0)-(b.tableId?1:0)||a.nom.localeCompare(b.nom));
+  let list=S.resa.slice().sort((a,b)=>(a.nom||'').localeCompare((b.nom||''),'fr',{numeric:true,sensitivity:'base'}));
   list=list.filter(r=>{
     if(fSearch&&!(r.nom+' '+r.notes).toLowerCase().includes(fSearch.toLowerCase()))return false;
     if(fStatus==='Confirmées'&&!isConf(r))return false;
@@ -759,7 +759,7 @@ function openFurn(id){openFurnId=id;const f=furnById(id);if(!f)return;const t=cf
     m.querySelectorAll('[data-un2]').forEach(x=>x.onclick=()=>{unassign(x.dataset.un2);renderAll();openFurn(id);});
     const qs=document.getElementById('qs');
     const drawRes=()=>{const q=qs.value.toLowerCase();
-      const cand=S.resa.filter(r=>!r.tableId&&(r.nom+' '+r.notes).toLowerCase().includes(q)).slice(0,40);
+      const cand=S.resa.filter(r=>!r.tableId&&(r.nom+' '+r.notes).toLowerCase().includes(q)).sort((a,b)=>(a.nom||'').localeCompare((b.nom||''),'fr',{numeric:true,sensitivity:'base'})).slice(0,40);
       document.getElementById('qres').innerHTML=cand.length?cand.map(r=>`<div data-add2="${r.id}"><span>${esc(r.nom)} <small style="color:#94a3b8">${esc((r.cat||'').trim())}</small></span><b>${r.pax}p</b></div>`).join(''):'<div style="padding:11px;color:#94a3b8;font-size:12.5px">Aucune résa à placer ne correspond</div>';
       document.querySelectorAll('[data-add2]').forEach(x=>x.onclick=()=>{assign(x.dataset.add2,id);renderAll();openFurn(id);});};
     qs.oninput=drawRes;drawRes();
@@ -866,10 +866,10 @@ function importCSV(text){
 }
 
 document.getElementById('exportBtn').onclick=()=>{
-  const head=['N°','Nom / Structure','Catégorie','Nb personnes','Téléphone','Statut','Notes','Table assignée','Type emplacement'];
+  const head=['N°','Nom / Structure','Catégorie','Nb personnes','Téléphone','Statut','Notes','Table assignée','Type de table'];
   const rows=S.resa.map(r=>{const f=r.tableId?furnById(r.tableId):null;
     return [r.id,r.nom,(r.cat||'').trim(),r.pax,r.tel||'',r.statut||'',r.notes||'',f?(f.n??'')+'':'',f?cfg(f).label:''];});
-  rows.sort((a,b)=>(''+a[7]).localeCompare(''+b[7],undefined,{numeric:true}));
+  rows.sort((a,b)=>(''+a[1]).localeCompare((''+b[1]),'fr',{numeric:true,sensitivity:'base'}));
   const esc=v=>{v=(''+v);return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
   const csv='\ufeff'+[head,...rows].map(r=>r.map(esc).join(';')).join('\r\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
@@ -1134,7 +1134,7 @@ function renderWelcome(){
   var totP=S.resa.reduce(function(s,r){return s+(+r.pax||0);},0);
   var plP=S.resa.filter(function(r){return r.tableId;}).reduce(function(s,r){return s+(+r.pax||0);},0);
   var ro=!wCan();
-  var list=S.resa.slice().sort(function(a,b){return a.nom.localeCompare(b.nom);});
+  var list=S.resa.slice().sort(function(a,b){return (a.nom||'').localeCompare((b.nom||''),'fr',{numeric:true,sensitivity:'base'});});
   var q=wSearch.trim().toLowerCase();
   if(q)list=list.filter(function(r){return (r.nom+' '+(r.notes||'')).toLowerCase().indexOf(q)>=0;});
   if(wFilter==='\u00c0 placer')list=list.filter(function(r){return !r.tableId;});
