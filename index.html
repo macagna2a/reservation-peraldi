@@ -914,22 +914,22 @@ function openPlanPdf(){const m=document.getElementById('modal');
    <button class="addresa" data-fmt="A3" style="background:var(--orange);color:#241f15;border:none;margin:0">Plan A3</button></div>
    <div class="sectlabel">Liste de placement</div>
    <p style="font-size:12.5px;color:#475569;margin-top:0">Tableau : table, nom, nb de personnes, catégorie, statut, préférence.</p>
-   <button class="addresa" id="listPdf" style="background:var(--navy);color:#fff;border:none;margin:0">📋 Liste de placement (A4)</button></div>`;
+   <div style="display:flex;gap:10px"><button class="addresa" id="listPdfT" style="background:var(--navy);color:#fff;border:none;margin:0">📋 Par table (A4)</button><button class="addresa" id="listPdfN" style="background:var(--navy);color:#fff;border:none;margin:0">🔤 Par nom (A4)</button></div></div>`;
   document.getElementById('modalBg').classList.add('show');document.getElementById('mclose').onclick=closeModal;
   m.querySelectorAll('[data-fmt]').forEach(b=>b.onclick=()=>{closeModal();exportPlanPDF(b.dataset.fmt);});
-  document.getElementById('listPdf').onclick=()=>{closeModal();exportListPDF();};
+  document.getElementById('listPdfT').onclick=()=>{closeModal();exportListPDF('table');};document.getElementById('listPdfN').onclick=()=>{closeModal();exportListPDF('name');};
 }
-function exportListPDF(){
+function exportListPDF(sortBy){
   if(!window.jspdf){toast('Export PDF indisponible — connexion requise au 1er chargement.');return;}
   const {jsPDF}=window.jspdf;const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   if(typeof pdf.autoTable!=='function'){toast('Module tableau non chargé — réessayez avec une connexion.');return;}
   const e=curEvent();
   const tlabel=f=>f?(f.n!=null?('T'+f.n):cfg(f).short):'—';
   const rows=S.resa.map(r=>{const f=r.tableId?furnById(r.tableId):null;return {r,f,k:f?(f.n!=null?f.n:99998):100000};});
-  rows.sort((a,b)=>a.k-b.k||a.r.nom.localeCompare(b.r.nom));
+  if(sortBy==='name')rows.sort((a,b)=>(a.r.nom||'').localeCompare((b.r.nom||''),'fr',{numeric:true,sensitivity:'base'}));else rows.sort((a,b)=>a.k-b.k||a.r.nom.localeCompare(b.r.nom));
   const body=rows.map(({r,f})=>[tlabel(f),r.nom,''+r.pax,(r.cat||'').trim(),(r.statut||''),r.notes||'']);
   const totP=S.resa.reduce((s,r)=>s+(+r.pax||0),0),plP=S.resa.filter(r=>r.tableId).reduce((s,r)=>s+(+r.pax||0),0);
-  const sub=(e.organizer?e.organizer+'   ·   ':'')+'Liste de placement   ·   '+S.resa.length+' résas · '+totP+' couverts (placés '+plP+')'+(e.maxCap?' · jauge '+e.maxCap:'')+'   ·   '+new Date().toLocaleDateString('fr-FR');
+  const sub=(e.organizer?e.organizer+'   ·   ':'')+'Liste de placement'+(sortBy==='name'?' (par nom)':' (par table)')+'   ·   '+S.resa.length+' résas · '+totP+' couverts (placés '+plP+')'+(e.maxCap?' · jauge '+e.maxCap:'')+'   ·   '+new Date().toLocaleDateString('fr-FR');
   pdf.autoTable({head:[['Table','Nom / Structure','Pers.','Catégorie','Statut','Préférence']],body,startY:24,margin:{top:24,left:10,right:10},
     styles:{font:'helvetica',fontSize:8.5,cellPadding:1.6,overflow:'linebreak',valign:'middle'},
     headStyles:{fillColor:[31,58,95],textColor:255,fontStyle:'bold'},
@@ -939,7 +939,7 @@ function exportListPDF(){
       pdf.setFont('helvetica','normal');pdf.setTextColor(90,100,115);pdf.setFontSize(8.5);pdf.text(sub,10,18);
       pdf.setFontSize(8);pdf.setTextColor(120,130,140);pdf.text('page '+d.pageNumber,pdf.internal.pageSize.getWidth()-22,pdf.internal.pageSize.getHeight()-6);}
   });
-  pdf.save('liste_placement_'+(e.name||'evenement').replace(/[^a-z0-9]+/gi,'_').toLowerCase()+'.pdf');
+  pdf.save('liste_placement_'+(sortBy==='name'?'par_nom_':'par_table_')+(e.name||'evenement').replace(/[^a-z0-9]+/gi,'_').toLowerCase()+'.pdf');
   toast('Liste PDF téléchargée');
 }
 async function exportPlanPDF(format){
