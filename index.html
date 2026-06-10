@@ -70,6 +70,7 @@ header .brand span{font-size:11px;color:#c7b487}
 .fz.over{outline-color:var(--red);box-shadow:0 0 0 2px var(--red),0 4px 12px rgba(0,0,0,.5)}
 .fz .badge{position:absolute;top:-7px;right:-7px;background:var(--navy);color:#fff;border:2px solid #fff;border-radius:20px;min-width:18px;height:18px;padding:0 4px;font-size:10px;display:flex;align-items:center;justify-content:center;text-shadow:none;font-weight:700}
 .fz .rot{position:absolute;top:-24px;left:50%;width:17px;height:17px;border-radius:50%;background:#fff;border:2px solid var(--navy);transform:translateX(-50%);cursor:grab;box-shadow:0 1px 4px rgba(0,0,0,.45);touch-action:none;z-index:22}
+.rsz{position:absolute;right:-9px;bottom:-9px;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--orange);cursor:nwse-resize;box-shadow:0 1px 4px rgba(0,0,0,.45);touch-action:none;z-index:22}
 .fz .rot::after{content:"↻";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--navy);font-weight:700}
 .fz .rot::before{content:"";position:absolute;left:50%;top:15px;width:2px;height:11px;background:var(--navy);transform:translateX(-50%)}
 .fz.pulse{animation:pulse 1s ease infinite}
@@ -434,12 +435,12 @@ function makeMarker(f){
     el.style.width=L*scale+'px';el.style.height=Math.max(W,30)*scale+'px';
     el.style.transform=`translate(-50%,-50%) rotate(${f.ang||0}deg)`;
     el.style.fontSize=Math.max(9,Math.min(15,W*scale*.42))+'px';
-    el.textContent=f.label?f.label:(f.n!=null?(t.short+' '+f.n):t.short);
+    el.textContent=(t.icon?t.icon+' ':'')+(f.label?f.label:(f.n!=null?(t.short+' '+f.n):t.short));
   }else{
     const d=(t.d||48)*scale;el.style.width=d+'px';el.style.height=d+'px';
     el.style.transform='translate(-50%,-50%)';
     el.style.fontSize=Math.max(9,d*.38)+'px';
-    if(t.shape==='icon'&&t.icon){el.style.fontSize=Math.max(12,d*.6)+'px';el.style.textShadow='none';el.textContent=t.icon;}else{el.textContent=f.n!=null?f.n:(f.label?f.label.slice(0,7):'');}
+    if(t.icon){el.style.fontSize=Math.max(12,d*.6)+'px';el.style.textShadow='none';el.textContent=t.icon;}else{el.textContent=f.n!=null?f.n:(f.label?f.label.slice(0,7):'');}
   }
   if(t.assignable){
     const o=occ(f.id);
@@ -450,7 +451,7 @@ function makeMarker(f){
   }
   if(f.id===openFurnId)el.classList.add('sel');
   if(mode==='resa'&&selResa&&t.assignable)el.classList.add('pulse');
-  if(mode==='edit'&&(t.shape==='rect'||t.shape==='zone')){const hd=document.createElement('div');hd.className='rot';hd.title='Glisser pour pivoter';attachRotate(hd,el,f);el.appendChild(hd);}
+  if(mode==='edit'&&(t.shape==='rect'||t.shape==='zone')){const hd=document.createElement('div');hd.className='rot';hd.title='Glisser pour pivoter';attachRotate(hd,el,f);el.appendChild(hd);var rs=document.createElement('div');rs.className='rsz';rs.title='Glisser pour redimensionner';attachResize(rs,el,f);el.appendChild(rs);}
   el.addEventListener('mouseenter',e=>showTip(f,e));
   el.addEventListener('mousemove',e=>moveTip(e));
   el.addEventListener('mouseleave',hideTip);
@@ -626,7 +627,7 @@ function renderEditPanel(){
       <span style="flex:1">${esc(c.label)}</span>
       <b style="color:#64748b">${count[k]||0}</b>
       <button data-rn="${k}" class="${ED}" title="Renommer" style="border:1px solid #d8cfbb;background:#fff;border-radius:7px;padding:2px 9px;font-size:13px">\u270e</button>`;
-    inv.appendChild(row);
+    if(!TYPES[k]){var db=document.createElement('button');db.setAttribute('data-del',k);db.className=ED;db.title='Supprimer';db.textContent='🗑';db.style.cssText='border:1px solid #f0c5c0;background:#fff;color:#c0392b;border-radius:7px;padding:2px 9px;font-size:13px;cursor:pointer';db.onclick=function(){removeFurnType(k);};row.appendChild(db);}inv.appendChild(row);
   });
   inv.querySelectorAll('[data-rn]').forEach(x=>x.onclick=()=>openCustomForm(x.dataset.rn));
 }
@@ -673,7 +674,7 @@ function openCustomForm(editKey){
     const color=document.getElementById('cColor').value;
     const assign=document.getElementById('cAssign').checked;
     const cap=assign?(parseInt(document.getElementById('cCap').value)||0):0;
-    const shape=selSym?'icon':document.getElementById('cShape').value;
+    const shape=document.getElementById('cShape').value;
     const icon=selSym||'';
     S.types=S.types||[];
     if(editKey){
@@ -746,7 +747,7 @@ function openFurn(id){openFurnId=id;const f=furnById(id);if(!f)return;const t=cf
      <div class="editrow"><label>Type</label><select id="edT">${Object.keys(TYPES).map(k=>`<option value="${k}" ${k===f.type?'selected':''}>${TYPES[k].label}</option>`).join('')}</select></div>
      <div class="editrow"><label>Invités ?</label><label style="width:auto;font-weight:500"><input type="checkbox" id="edAssign" ${c.assignable?'checked':''}> attribuable</label></div>
      ${c.shape==='rect'||c.shape==='zone'?`<div class="editrow"><label>Rotation</label><input id="edA" type="number" value="${Math.round(f.ang||0)}"> °</div>
-       <div class="editrow"><label>Longueur</label><input id="edL" type="number" value="${Math.round(f.L||160)}"></div>`:''}
+       <div class="editrow"><label>Longueur</label><input id="edL" type="number" value="${Math.round(f.L||160)}"></div><div class="editrow"><label>Largeur</label><input id="edW" type="number" value="${Math.round(f.Wd||44)}"></div>`:`<div class="editrow"><label>Taille</label><input id="edD" type="number" min="16" value="${Math.round(f.d||c.d||48)}"></div>`}
      <button class="del" id="delF">🗑 Supprimer ce meuble</button>`;
   }
   html+=`</div>`;
@@ -771,7 +772,7 @@ function openFurn(id){openFurnId=id;const f=furnById(id);if(!f)return;const t=cf
     const edAssign=document.getElementById('edAssign');if(edAssign)edAssign.onchange=()=>{f.assignable=edAssign.checked;if(f.assignable&&!f.cap)f.cap=8;save();renderAll();openFurn(id);};
     const edT=document.getElementById('edT');if(edT)edT.onchange=()=>{f.type=edT.value;if(!f.cap)f.cap=TYPES[f.type].cap;save();renderAll();openFurn(id);};
     const edA=document.getElementById('edA');if(edA)edA.onchange=()=>{f.ang=+edA.value||0;save();renderAll();};
-    const edL=document.getElementById('edL');if(edL)edL.onchange=()=>{f.L=+edL.value||160;save();renderAll();};
+    const edL=document.getElementById('edL');if(edL)edL.onchange=()=>{f.L=+edL.value||160;save();renderAll();};const edW=document.getElementById('edW');if(edW)edW.onchange=()=>{f.Wd=Math.max(10,+edW.value||44);save();renderAll();};const edD=document.getElementById('edD');if(edD)edD.onchange=()=>{f.d=Math.max(16,+edD.value||48);save();renderAll();};
     document.getElementById('delF').onclick=()=>{if(confirm('Supprimer ce meuble ?')){resasAt(id).forEach(r=>r.tableId=null);logChange('Meuble supprimé');S.furn=S.furn.filter(x=>x.id!==id);save();closeModal();renderAll();}};
   }
 }
@@ -891,11 +892,11 @@ async function renderPlanCanvas(mult){mult=mult||2;
     if(t.shape==='rect'||t.shape==='zone'){const L=(f.L||160)*mult,Wd=Math.max(f.Wd||44,30)*mult;
       x.translate(cx,cy);x.rotate((f.ang||0)*Math.PI/180);roundRect(x,-L/2,-Wd/2,L,Wd,8*mult);x.fill();x.stroke();
       x.fillStyle='#fff';x.font='bold '+Math.max(11,Wd*0.42)+'px Arial';
-      x.fillText(f.label?f.label:(f.n!=null?(t.short+' '+f.n):t.short),0,0);
+      x.fillText((t.icon?t.icon+' ':'')+(f.label?f.label:(f.n!=null?(t.short+' '+f.n):t.short)),0,0);
     } else {const d=(t.d||48)*mult,r=d/2;
       if(t.shape==='hex')hexPath(x,cx,cy,r);else if(t.shape==='sq')roundRect(x,cx-r,cy-r,d,d,6*mult);else{x.beginPath();x.arc(cx,cy,r,0,7);}
       x.fill();x.stroke();x.fillStyle='#08243a';x.font='bold '+Math.max(11,d*0.4)+'px Arial';
-      if(t.shape==='icon'&&t.icon){x.font=Math.max(12,d*0.6)+'px Arial';x.fillText(t.icon,cx,cy);}else{x.fillText(f.n!=null?(''+f.n):((f.label||t.short||'').slice(0,6)),cx,cy);}}
+      if(t.icon){x.font=Math.max(12,d*0.6)+'px Arial';x.fillText(t.icon,cx,cy);}else{x.fillText(f.n!=null?(''+f.n):((f.label||t.short||'').slice(0,6)),cx,cy);}}
     x.restore();
     if(t.assignable){const o=occ(f.id);if(o>0){const r=(t.d||48)*mult/2;
       const half=(t.shape==='rect'||t.shape==='zone');
@@ -1181,6 +1182,29 @@ function togglePlanFull(){
   try{var el=document.documentElement;if(on){var rf=el.requestFullscreen||el.webkitRequestFullscreen;if(rf)rf.call(el);}else{var ef=document.exitFullscreen||document.webkitExitFullscreen;if((document.fullscreenElement||document.webkitFullscreenElement)&&ef)ef.call(document);}}catch(e){}
   var zb=document.getElementById('zfull');if(zb)zb.title=on?'Quitter le plein écran':'Plein écran';
   setTimeout(function(){fit();},90);
+}
+
+function removeFurnType(key){
+  if(typeof RW==='function'&&!RW())return;
+  if(TYPES[key]){toast('Les types intégrés ne peuvent pas être supprimés');return;}
+  var def=(S.types||[]).find(function(t){return t.key===key;});var label=def?def.label:key;
+  var n=S.furn.filter(function(f){return f.type===key;}).length;
+  if(!confirm('Supprimer « '+label+' » de la liste ?'+(n?(' '+n+' meuble(s) de ce type seront retirés du plan'):'')+'.'))return;
+  S.furn.filter(function(f){return f.type===key;}).forEach(function(f){resasAt(f.id).forEach(function(r){r.tableId=null;});});
+  S.furn=S.furn.filter(function(f){return f.type!==key;});
+  S.types=(S.types||[]).filter(function(t){return t.key!==key;});
+  logChange('Type supprimé : '+label);save();if(typeof closeModal==='function')closeModal();renderAll();toast('« '+label+' » retiré de la liste');
+}
+function attachResize(hd,el,f){
+  hd.addEventListener('pointerdown',function(e){e.stopPropagation();e.preventDefault();
+    var onMove=function(ev){var r=el.getBoundingClientRect();var cx=r.left+r.width/2,cy=r.top+r.height/2;
+      var vx=(ev.clientX-cx)/scale, vy=(ev.clientY-cy)/scale;var a=(f.ang||0)*Math.PI/180;
+      var lx=vx*Math.cos(-a)-vy*Math.sin(-a), ly=vx*Math.sin(-a)+vy*Math.cos(-a);
+      f.L=Math.max(40,Math.round(Math.abs(lx)*2));f.Wd=Math.max(16,Math.round(Math.abs(ly)*2));
+      el.style.width=f.L*scale+'px';el.style.height=Math.max(f.Wd,30)*scale+'px';
+      el.style.fontSize=Math.max(9,Math.min(15,f.Wd*scale*0.42))+'px';};
+    var onUp=function(){document.removeEventListener('pointermove',onMove);document.removeEventListener('pointerup',onUp);save();if(openFurnId===f.id)openFurn(f.id);};
+    document.addEventListener('pointermove',onMove);document.addEventListener('pointerup',onUp);});
 }
 
 function renderAll(){applyRole();renderStats();renderStage();if(mode==='edit')renderEditPanel();else renderResaPanel();}
