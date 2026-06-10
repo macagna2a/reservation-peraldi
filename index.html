@@ -435,7 +435,7 @@ function makeMarker(f){
     el.style.width=L*scale+'px';el.style.height=Math.max(W,30)*scale+'px';
     el.style.transform=`translate(-50%,-50%) rotate(${f.ang||0}deg)`;
     el.style.fontSize=Math.max(9,Math.min(15,W*scale*.42))+'px';
-    el.textContent=(t.icon?t.icon+' ':'')+(f.label?f.label:(f.n!=null?(t.short+' '+f.n):t.short));
+    el.textContent=(t.icon?t.icon+' ':'')+(f.n!=null?(''+f.n):(f.label?f.label:t.short));
   }else{
     const d=(t.d||48)*scale;el.style.width=d+'px';el.style.height=d+'px';
     el.style.transform='translate(-50%,-50%)';
@@ -744,7 +744,7 @@ function openFurn(id){openFurnId=id;const f=furnById(id);if(!f)return;const t=cf
      <div class="editrow"><label>Forme</label><select id="edShape">${[['round','Rond'],['hex','Hexagone'],['sq','Carré'],['rect','Rectangle'],['zone','Zone']].map(([v,l])=>`<option value="${v}" ${c.shape===v?'selected':''}>${l}</option>`).join('')}</select></div>
      <div class="sectlabel" style="margin-top:10px">Réglages</div>
      <div class="editrow"><label>Numéro</label><input id="edN" value="${f.n??''}" placeholder="(aucun)"></div>
-     <div class="editrow"><label>Type</label><select id="edT">${Object.keys(TYPES).map(k=>`<option value="${k}" ${k===f.type?'selected':''}>${TYPES[k].label}</option>`).join('')}</select></div>
+     <div class="editrow"><label>Type</label><select id="edT">${[].concat(Object.keys(TYPES).map(k=>({k:k,l:TYPES[k].label})),(S.types||[]).filter(t=>!TYPES[t.key]).map(t=>({k:t.key,l:t.label}))).map(o=>`<option value="${o.k}" ${o.k===f.type?'selected':''}>${esc(o.l)}</option>`).join('')}</select></div>
      <div class="editrow"><label>Invités ?</label><label style="width:auto;font-weight:500"><input type="checkbox" id="edAssign" ${c.assignable?'checked':''}> attribuable</label></div>
      ${c.shape==='rect'||c.shape==='zone'?`<div class="editrow"><label>Rotation</label><input id="edA" type="number" value="${Math.round(f.ang||0)}"> °</div>
        <div class="editrow"><label>Longueur</label><input id="edL" type="number" value="${Math.round(f.L||160)}"></div><div class="editrow"><label>Largeur</label><input id="edW" type="number" value="${Math.round(f.Wd||44)}"></div>`:`<div class="editrow"><label>Taille</label><input id="edD" type="number" min="16" value="${Math.round(f.d||c.d||48)}"></div>`}
@@ -770,7 +770,7 @@ function openFurn(id){openFurnId=id;const f=furnById(id);if(!f)return;const t=cf
     const edColor=document.getElementById('edColor');if(edColor)edColor.oninput=()=>{f.color=edColor.value;save();renderStage();};
     const edShape=document.getElementById('edShape');if(edShape)edShape.onchange=()=>{f.shape=edShape.value;if((f.shape==='rect'||f.shape==='zone')&&!f.L){f.L=180;f.Wd=44;}save();renderAll();openFurn(id);};
     const edAssign=document.getElementById('edAssign');if(edAssign)edAssign.onchange=()=>{f.assignable=edAssign.checked;if(f.assignable&&!f.cap)f.cap=8;save();renderAll();openFurn(id);};
-    const edT=document.getElementById('edT');if(edT)edT.onchange=()=>{f.type=edT.value;if(!f.cap)f.cap=TYPES[f.type].cap;save();renderAll();openFurn(id);};
+    const edT=document.getElementById('edT');if(edT)edT.onchange=()=>{f.type=edT.value;if(!f.cap){var _d=(typeof typeDef==='function'?typeDef(f.type):TYPES[f.type])||TYPES.custom;f.cap=_d.cap||0;}save();renderAll();openFurn(id);};
     const edA=document.getElementById('edA');if(edA)edA.onchange=()=>{f.ang=+edA.value||0;save();renderAll();};
     const edL=document.getElementById('edL');if(edL)edL.onchange=()=>{f.L=+edL.value||160;save();renderAll();};const edW=document.getElementById('edW');if(edW)edW.onchange=()=>{f.Wd=Math.max(10,+edW.value||44);save();renderAll();};const edD=document.getElementById('edD');if(edD)edD.onchange=()=>{f.d=Math.max(16,+edD.value||48);save();renderAll();};
     var _dupB=document.getElementById('dupF');if(_dupB)_dupB.onclick=()=>duplicateFurn(id);document.getElementById('delF').onclick=()=>{if(confirm('Supprimer ce meuble ?')){resasAt(id).forEach(r=>r.tableId=null);logChange('Meuble supprimé');S.furn=S.furn.filter(x=>x.id!==id);save();closeModal();renderAll();}};
@@ -892,7 +892,7 @@ async function renderPlanCanvas(mult){mult=mult||2;
     if(t.shape==='rect'||t.shape==='zone'){const L=(f.L||160)*mult,Wd=Math.max(f.Wd||44,30)*mult;
       x.translate(cx,cy);x.rotate((f.ang||0)*Math.PI/180);roundRect(x,-L/2,-Wd/2,L,Wd,8*mult);x.fill();x.stroke();
       x.fillStyle='#fff';x.font='bold '+Math.max(11,Wd*0.42)+'px Arial';
-      x.fillText((t.icon?t.icon+' ':'')+(f.label?f.label:(f.n!=null?(t.short+' '+f.n):t.short)),0,0);
+      x.fillText((t.icon?t.icon+' ':'')+(f.n!=null?(''+f.n):(f.label?f.label:t.short)),0,0);
     } else {const d=(t.d||48)*mult,r=d/2;
       if(t.shape==='hex')hexPath(x,cx,cy,r);else if(t.shape==='sq')roundRect(x,cx-r,cy-r,d,d,6*mult);else{x.beginPath();x.arc(cx,cy,r,0,7);}
       x.fill();x.stroke();x.fillStyle='#08243a';x.font='bold '+Math.max(11,d*0.4)+'px Arial';
