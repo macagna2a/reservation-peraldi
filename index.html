@@ -794,14 +794,24 @@ function mapFurnType(name,capHint){const n=normTxt(name);
   return ensureCustomType(name,capHint);}
 function buildFurnitureFromNeeds(needs){
   if(typeof RW==='function'&&!RW())return;
-  const plan=needs.map(nd=>{const key=mapFurnType(nd.label,nd.capHint);const have=S.furn.filter(f=>f.type===key).length;return {label:cfg({type:key}).label,key,need:nd.count||0,have,add:Math.max(0,(nd.count||0)-have)};});
-  const toAdd=plan.filter(p=>p.add>0);
-  const lines=plan.map(p=>'\u2022 '+p.label+' : besoin '+p.need+', en place '+p.have+(p.add>0?(' \u2192 +'+p.add):' (ok)')).join('\n');
-  if(!toAdd.length){toast('Mobilier d\u00e9j\u00e0 en place ('+plan.reduce((s,p)=>s+p.need,0)+' emplacements).');return;}
-  if(!confirm('Mettre en place le mobilier calcul\u00e9 ?\n\n'+lines+'\n\nLes emplacements manquants seront ajout\u00e9s en grille, \u00e0 disposer ensuite sur le plan.'))return;
-  let k=0;const x0=70,y0=70,step=92,perRow=Math.max(6,Math.floor((S.w-120)/step));let created=0;
-  toAdd.forEach(p=>{const td=typeDef(p.key)||TYPES['custom'];for(let i=0;i<p.add;i++){const x=x0+(k%perRow)*step,y=y0+Math.floor(k/perRow)*step;k++;const f={id:'f'+Date.now()+'_'+k+'_'+i,type:p.key,x,y,ang:0};if(td.assignable)f.n=nextNum();if(td.shape==='rect'||td.shape==='zone'){f.L=200;f.Wd=44;}S.furn.push(f);created++;}});
-  logChange(created+' emplacement(s) ajoutés (import mobilier)');save();renderAll();toast(created+' emplacement(s) ajout\u00e9(s) en grille \u2014 \u00e0 disposer sur le plan.');
+  const plan=needs.map(function(nd){var key=mapFurnType(nd.label,nd.capHint);var have=S.furn.filter(function(f){return f.type===key;}).length;var need=nd.count||0;return {label:cfg({type:key}).label,key:key,need:need,have:have,add:Math.max(0,need-have),rem:Math.max(0,have-need)};});
+  function ordRem(key,n){var insts=S.furn.filter(function(f){return f.type===key;}).sort(function(a,b){return (occ(a.id)>0?1:0)-(occ(b.id)>0?1:0)||((b.n||0)-(a.n||0));});return insts.slice(0,n);}
+  var totalAdd=0,totalRem=0,occRem=0;
+  plan.forEach(function(p){totalAdd+=p.add;totalRem+=p.rem;if(p.rem>0){occRem+=ordRem(p.key,p.rem).filter(function(f){return occ(f.id)>0;}).length;}});
+  if(!totalAdd&&!totalRem){toast('Mobilier déjà conforme au calcul ('+plan.reduce(function(s,p){return s+p.need;},0)+' emplacements).');return;}
+  var lines=plan.map(function(p){var d=p.add?(' → +'+p.add):(p.rem?(' → -'+p.rem):' (ok)');return '• '+p.label+' : besoin '+p.need+', en place '+p.have+d;}).join('\n');
+  var msg='Ajuster le mobilier au calcul ?\n\n'+lines+'\n\nLes manquants seront ajoutés (en grille), les surplus retirés';
+  if(occRem>0)msg+='\n\n⚠ '+occRem+' emplacement(s) à retirer ont des invités placés : ils seront retirés et ces invités repasseront « à placer »';
+  msg+='.';
+  if(!confirm(msg))return;
+  var k=0,x0=70,y0=70,step=92,perRow=Math.max(6,Math.floor((S.w-120)/step)),created=0,removed=0,unplaced=0;
+  plan.forEach(function(p){
+    if(p.add>0){var td=typeDef(p.key)||TYPES['custom'];for(var i=0;i<p.add;i++){var x=x0+(k%perRow)*step,y=y0+Math.floor(k/perRow)*step;k++;var f={id:'f'+Date.now()+'_'+k+'_'+i,type:p.key,x:x,y:y,ang:0};if(td.assignable)f.n=nextNum();if(td.shape==='rect'||td.shape==='zone'){f.L=200;f.Wd=44;}S.furn.push(f);created++;}}
+    else if(p.rem>0){var toGo=ordRem(p.key,p.rem);var ids={};toGo.forEach(function(f){ids[f.id]=1;S.resa.forEach(function(r){if(r.tableId===f.id){r.tableId=null;unplaced++;}});});S.furn=S.furn.filter(function(f){return !ids[f.id];});removed+=toGo.length;}
+  });
+  logChange('Ajustement mobilier (import) : +'+created+' / -'+removed+(unplaced?(' , '+unplaced+' invité(s) dé-placés'):''));
+  save();renderAll();
+  toast('Mobilier ajusté : +'+created+' / -'+removed+(unplaced?(' · '+unplaced+' à replacer'):''));
 }
 function importCSV(text){
   const lines=text.split(/\r?\n/);
