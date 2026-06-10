@@ -748,7 +748,7 @@ function openFurn(id){openFurnId=id;const f=furnById(id);if(!f)return;const t=cf
      <div class="editrow"><label>Invités ?</label><label style="width:auto;font-weight:500"><input type="checkbox" id="edAssign" ${c.assignable?'checked':''}> attribuable</label></div>
      ${c.shape==='rect'||c.shape==='zone'?`<div class="editrow"><label>Rotation</label><input id="edA" type="number" value="${Math.round(f.ang||0)}"> °</div>
        <div class="editrow"><label>Longueur</label><input id="edL" type="number" value="${Math.round(f.L||160)}"></div><div class="editrow"><label>Largeur</label><input id="edW" type="number" value="${Math.round(f.Wd||44)}"></div>`:`<div class="editrow"><label>Taille</label><input id="edD" type="number" min="16" value="${Math.round(f.d||c.d||48)}"></div>`}
-     <button class="del" id="delF">🗑 Supprimer ce meuble</button>`;
+     <button class="addresa" id="dupF" style="background:var(--navy);color:#fff;border:none;margin-bottom:8px">⧉ Dupliquer ce meuble</button><button class="del" id="delF">🗑 Supprimer ce meuble</button>`;
   }
   html+=`</div>`;
   m.innerHTML=html;
@@ -773,7 +773,7 @@ function openFurn(id){openFurnId=id;const f=furnById(id);if(!f)return;const t=cf
     const edT=document.getElementById('edT');if(edT)edT.onchange=()=>{f.type=edT.value;if(!f.cap)f.cap=TYPES[f.type].cap;save();renderAll();openFurn(id);};
     const edA=document.getElementById('edA');if(edA)edA.onchange=()=>{f.ang=+edA.value||0;save();renderAll();};
     const edL=document.getElementById('edL');if(edL)edL.onchange=()=>{f.L=+edL.value||160;save();renderAll();};const edW=document.getElementById('edW');if(edW)edW.onchange=()=>{f.Wd=Math.max(10,+edW.value||44);save();renderAll();};const edD=document.getElementById('edD');if(edD)edD.onchange=()=>{f.d=Math.max(16,+edD.value||48);save();renderAll();};
-    document.getElementById('delF').onclick=()=>{if(confirm('Supprimer ce meuble ?')){resasAt(id).forEach(r=>r.tableId=null);logChange('Meuble supprimé');S.furn=S.furn.filter(x=>x.id!==id);save();closeModal();renderAll();}};
+    var _dupB=document.getElementById('dupF');if(_dupB)_dupB.onclick=()=>duplicateFurn(id);document.getElementById('delF').onclick=()=>{if(confirm('Supprimer ce meuble ?')){resasAt(id).forEach(r=>r.tableId=null);logChange('Meuble supprimé');S.furn=S.furn.filter(x=>x.id!==id);save();closeModal();renderAll();}};
   }
 }
 function closeModal(){document.getElementById('modalBg').classList.remove('show');openFurnId=null;renderStage();}
@@ -1212,6 +1212,18 @@ function attachResize(hd,el,f){
       el.style.fontSize=Math.max(9,Math.min(15,f.Wd*scale*0.42))+'px';};
     var onUp=function(){document.removeEventListener('pointermove',onMove);document.removeEventListener('pointerup',onUp);save();if(openFurnId===f.id)openFurn(f.id);};
     document.addEventListener('pointermove',onMove);document.addEventListener('pointerup',onUp);});
+}
+
+function duplicateFurn(id){
+  if(typeof RW==='function'&&!RW())return;
+  var f=furnById(id);if(!f)return;
+  var g=Object.assign({},f);
+  g.id='f'+Date.now()+'_'+Math.floor(Math.random()*1000);
+  g.x=(f.x||0)+30;g.y=(f.y||0)+30;
+  if(cfg(f).assignable)g.n=nextNum();else if('n' in g)delete g.n;
+  S.furn.push(g);
+  logChange('Meuble dupliqué : '+(f.label||cfg(f).label||''));
+  save();renderAll();openFurn(g.id);toast('Meuble dupliqué — à déplacer');
 }
 
 function renderAll(){applyRole();renderStats();renderStage();if(mode==='edit')renderEditPanel();else renderResaPanel();}
